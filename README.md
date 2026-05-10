@@ -198,7 +198,7 @@ Exemplo:
 ### Clonar repositório
 
 ```bash
-git clone <url-do-repositorio>
+git clone https://github.com/StevegitXz/Norte-Eventos.git
 ```
 
 ---

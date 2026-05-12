@@ -12,7 +12,7 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 
 // 3. Rota para entregar a sua página index.html
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/pages/index.html'));
+    res.sendFile(path.join(__dirname, '../frontend/pages/home.html'));
 });
 
 const PORT = 3000;

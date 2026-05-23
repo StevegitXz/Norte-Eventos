@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro - Norte Eventos</title>
+</head>
+<body>
+    <h2>Criar Conta</h2>
+    <form id="formCadastro">
+        <input type="text" id="nome" placeholder="Nome completo" required><br><br>
+        <input type="email" id="email" placeholder="E-mail" required><br><br>
+        <input type="password" id="senha" placeholder="Senha" required><br><br>
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <script>
+        document.getElementById('formCadastro').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Impede a página de dar reload
+
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+
+            try {
+                // Faz a requisição para o seu servidor backend
+                const resposta = await fetch('http://localhost:3000/api/usuarios', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome, email, senha })
+                });
+
+                const dados = await resposta.json();
+
+                if (resposta.ok) {
+                    alert('Cadastro realizado com sucesso!');
+                    window.location.href = 'home.html'; // Redireciona
+                } else {
+                    alert('Erro: ' + dados.erro);
+                }
+            } catch (erro) {
+                alert('Não foi possível conectar ao servidor.');
+            }
+        });
+    </script>
+</body>
+</html>

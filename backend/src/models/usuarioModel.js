@@ -1,19 +1,25 @@
-// Simulador de banco de dados em memória
-const usuariosDB = [];
+// backend/src/models/usuarioModel.js
+const pool = require('../config/database');
 
 async function buscarPorEmail(email) {
-  // Simula um "SELECT * FROM usuarios WHERE email = ?"
-  return usuariosDB.find(user => user.email === email) || null;
+  const query = 'SELECT * FROM usuarios WHERE email = ?';
+  const [linhas] = await pool.execute(query, [email]);
+  
+  return linhas[0] || null;
 }
 
+
 async function salvar(dadosUsuario) {
-  // Simula um "INSERT INTO usuarios ..."
-  const novoUsuario = {
-    id: usuariosDB.length + 1,
-    ...dadosUsuario
+  const { nome, email, senha } = dadosUsuario;
+  
+  const query = 'INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)';
+  const [resultado] = await pool.execute(query, [nome, email, senha]);
+  
+  return {
+    id: resultado.insertId,
+    nome,
+    email
   };
-  usuariosDB.push(novoUsuario);
-  return novoUsuario;
 }
 
 module.exports = {

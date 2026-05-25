@@ -37,6 +37,8 @@ Atualmente, o projeto está sendo desenvolvido com foco em aprendizado prático 
 ### Outras ferramentas
 - dotenv
 - nodemon
+- bcrypt
+- cors
 
 ---
 
@@ -58,6 +60,7 @@ NORTE_EVENTOS/
 │
 ├── frontend/
 │   ├── css/
+│   ├── js/
 │   ├── pages/
 │   └── src/
 │
@@ -66,130 +69,6 @@ NORTE_EVENTOS/
 ├── package.json
 └── README.md
 ```
-
----
-
-## Explicação das pastas
-
-### `/backend`
-Contém toda a lógica do servidor e comunicação com banco de dados.
-
-### `/backend/src/controllers`
-Responsável pela lógica das rotas.
-
-Exemplo:
-- cadastrar evento
-- listar usuários
-- realizar inscrição
-
-Controllers recebem requisições e processam regras de negócio.
-
----
-
-### `/backend/src/middlewares`
-Funções intermediárias executadas antes da rota final.
-
-Exemplos:
-- autenticação
-- validação de dados
-- tratamento de erros
-
----
-
-### `/backend/src/models`
-Responsável pela comunicação com o banco de dados.
-
-Aqui ficam:
-- queries SQL
-- funções de acesso ao MySQL
-- abstração das tabelas
-
-Exemplo:
-- criar usuário
-- buscar evento por ID
-
----
-
-### `/backend/src/routers`
-Define as rotas da API.
-
-Exemplo:
-
-- `/usuarios`
-- `/eventos`
-- `/inscricoes`
-
-As rotas conectam URL → controller.
-
----
-
-### `/backend/server.js`
-Arquivo principal do servidor.
-
-Responsável por:
-- iniciar Express
-- configurar middlewares globais
-- registrar rotas
-- iniciar servidor
-
----
-
-## Frontend
-
-### `/frontend/css`
-Arquivos de estilização.
-
-Contém:
-- CSS customizado
-- configurações complementares ao Tailwind
-
----
-
-### `/frontend/pages`
-Páginas HTML do sistema.
-
-Exemplos:
-- login
-- cadastro
-- home
-- eventos
-
----
-
-### `/frontend/src`
-Scripts JavaScript do frontend.
-
-Responsável por:
-- manipulação de DOM
-- requisições para API
-- validações frontend
-
----
-
-## Arquivos principais
-
-### `.env`
-Armazena variáveis sensíveis.
-
-Exemplo:
-
-```env
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=sua_senha
-DB_NAME=norte_eventos
-```
-
-Esse arquivo **não deve ser enviado ao GitHub**.
-
----
-
-### `.gitignore`
-Ignora arquivos e pastas desnecessários.
-
-Exemplo:
-- node_modules
-- .env
 
 ---
 
@@ -206,7 +85,7 @@ git clone https://github.com/StevegitXz/Norte-Eventos.git
 ### Instalar dependências backend
 
 ```bash
-cd backend
+
 npm install
 ```
 
@@ -230,15 +109,6 @@ Criar banco:
 CREATE DATABASE norte_eventos;
 ```
 
-As tabelas incluem:
-
-- usuarios
-- categorias
-- eventos
-- inscricoes
-- pagamentos
-- feedbacks
-
 ---
 
 ## Objetivo acadêmico
@@ -256,3 +126,8 @@ Este projeto foi criado para fins educacionais, visando praticar:
 ## Equipe
 
 Projeto desenvolvido pelos integrantes responsáveis pela disciplina de Programação Web.
+- Ana Culqui
+- Mariana Melo
+- Izabel Lima
+- Estevão emanuel
+- Williane Gadelha

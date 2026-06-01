@@ -1,5 +1,4 @@
 
-```markdown
 # Norte Eventos
 
 Sistema web para cadastro, organização e gerenciamento de eventos locais.

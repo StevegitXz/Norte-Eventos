@@ -1,133 +1,148 @@
+
+```markdown
 # Norte Eventos
 
-Sistema web para cadastro e gerenciamento de eventos.
+Sistema web para cadastro, organização e gerenciamento de eventos locais.
 
-## Sobre o projeto
+## 📋 Sobre o projeto
 
-O **Norte Eventos** é um projeto acadêmico desenvolvido para a disciplina de **Programação para Web**, ministrada pelo professor **Álvaro**.
+O **Norte Eventos** é um projeto acadêmico desenvolvido para a disciplina de **Práticas de Programação**, sob a orientação do professor **Álvaro**.
 
-O objetivo do sistema é permitir o cadastro, gerenciamento e organização de eventos, oferecendo funcionalidades como:
-
-- Cadastro de usuários
-- Criação de eventos
-- Gerenciamento de inscrições
-- Organização por categorias
-- Controle de participantes
-
-Atualmente, o projeto está sendo desenvolvido com foco em aprendizado prático de desenvolvimento web full stack.
+O sistema utiliza a arquitetura **MVC (Model-View-Controller)** e contempla as seguintes funcionalidades:
+- Cadastro e autenticação de usuários com criptografia de senha.
+- Controle de sessões via tokens JWT armazenados em cookies.
+- Proteção e restrição de rotas privadas (Dashboard).
+- Sistema de inscrição e gerenciamento de eventos.
 
 ---
 
-## Tecnologias utilizadas
+## 🛠️ Tecnologias Utilizadas
 
-### Backend
-- Node.js
-- Express
-- MySQL
-
-### Frontend
-- HTML5
-- JavaScript
-- Tailwind CSS
-
-### Controle de versão
-- Git
-- GitHub
-
-### Outras ferramentas
-- dotenv
-- nodemon
-- bcrypt
-- cors
+- **Ambiente:** Node.js
+- **Framework Web:** Express
+- **Banco de Dados:** MySQL (Driver `mysql2`)
+- **Segurança:** `jsonwebtoken` (JWT), `bcrypt`, `cookie-parser`
+- **Frontend:** HTML5, JavaScript (ES6+ / Fetch API), Tailwind CSS
+- **Ferramentas:** `dotenv`, `nodemon`, `cors`
 
 ---
 
-## Estrutura de pastas
+## 📂 Estrutura de Pastas
 
 ```bash
 NORTE_EVENTOS/
 │
 ├── backend/
-│   ├── node_modules/
 │   ├── src/
-│   │   ├── controllers/
-│   │   ├── middlewares/
-│   │   ├── models/
-│   │   └── routers/
-│   ├── package.json
-│   ├── package-lock.json
-│   └── server.js
+│   │   ├── config/       # Conexão com o Banco de Dados
+│   │   ├── controllers/  # Regras de negócio e lógica de rotas
+│   │   ├── middlewares/  # Interceptadores de segurança (Validação JWT)
+│   │   ├── models/       # Consultas e manipulação do MySQL
+│   │   └── routers/      # Definição dos endpoints da API
+│   └── server.js         # Inicialização do servidor Express
 │
 ├── frontend/
-│   ├── css/
-│   ├── js/
-│   ├── pages/
-│   └── src/
+│   ├── assets/           # Imagens e mídias
+│   ├── css/              # Estilização (Tailwind / CSS global)
+│   ├── js/               # Scripts de interação com a API
+│   └── pages/            # Telas do sistema (Index, Login, Cadastro, Dashboard)
 │
-├── .env
-├── .gitignore
-├── package.json
-└── README.md
+├── .env.example          # Modelo das variáveis de ambiente
+├── .gitignore            # Arquivos ignorados pelo Git
+├── package.json          # Dependências e scripts da raiz
+└── README.md             # Documentação do projeto
+
 ```
 
 ---
 
-## Como rodar o projeto
+## 🚀 Como Rodar o Projeto
 
-### Clonar repositório
+### 1. Pré-requisitos
+
+* Node.js instalado.
+* Servidor MySQL ativo.
+
+### 2. Instalação e Configuração
+
+Clone o repositório e acesse a pasta raiz:
 
 ```bash
-git clone https://github.com/StevegitXz/Norte-Eventos.git
+git clone [https://github.com/StevegitXz/Norte-Eventos.git](https://github.com/StevegitXz/Norte-Eventos.git)
+cd Norte-Eventos
+
 ```
 
----
-
-### Instalar dependências backend
+Instale as dependências a partir do diretório raiz:
 
 ```bash
-
 npm install
+
 ```
 
----
+### 3. Variáveis de Ambiente
 
-### Rodar servidor
+Crie um arquivo `.env` na raiz do projeto com as seguintes chaves:
 
-```bash
-npm run dev
+```env
+PORT=3000
+
+DB_HOST=localhost
+DB_USER=seu_usuario_mysql
+DB_PASSWORD=sua_senha_mysql
+DB_NAME=norte_eventos
+DB_PORT=3306
+
+JWT_SECRET=sua_chave_secreta_jwt
+
 ```
 
----
+### 4. Banco de Dados
 
-## Banco de dados
-
-O projeto utiliza MySQL.
-
-Criar banco:
+Execute o script abaixo no seu terminal ou gerenciador MySQL:
 
 ```sql
 CREATE DATABASE norte_eventos;
+USE norte_eventos;
+
+CREATE TABLE usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    senha VARCHAR(255) NOT NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 ```
 
+### 5. Execução
+
+Para iniciar em ambiente de desenvolvimento (com recarregamento automático):
+
+```bash
+npm run dev
+
+```
+
+Para iniciar em modo de produção:
+
+```bash
+npm start
+
+```
+
+O servidor estará disponível em: `http://localhost:3000`
+
 ---
 
-## Objetivo acadêmico
+## 👥 Equipe do Projeto
 
-Este projeto foi criado para fins educacionais, visando praticar:
+* Ana Culqui
+* Estevão Emanuel
+* Izabel Lima
+* Mariana Melo
+* Williane Gadelha
 
-- arquitetura MVC
-- integração frontend + backend
-- APIs REST
-- banco de dados relacional
-- versionamento com Git/GitHub
+```
 
----
-
-## Equipe
-
-Projeto desenvolvido pelos integrantes responsáveis pela disciplina de Programação Web.
-- Ana Culqui
-- Mariana Melo
-- Izabel Lima
-- Estevão emanuel
-- Williane Gadelha
+```

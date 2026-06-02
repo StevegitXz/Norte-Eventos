@@ -1,18 +1,116 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Login - Norte Eventos</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Norte Eventos — Login</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Faça login na Norte Eventos para acessar suas próximas experiências imperdíveis. Acesse sua conta agora." />
+  <meta name="robots" content="index, follow" />
+  
+  <link href="[https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Inter:wght@400;500;600&display=swap](https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Inter:wght@400;500;600&display=swap)" rel="stylesheet"/>
+  
+  <!-- Ligação para o ficheiro CSS externo -->
+  <link rel="stylesheet" href="../css/login.css"/>
 </head>
 <body>
-    <h2>Acessar Conta</h2>
-    <form id="formLogin">
-        <input type="email" id="email" placeholder="Seu e-mail" required><br><br>
-        <input type="password" id="senha" placeholder="Sua senha" required><br><br>
-        <button type="submit">Entrar</button>
-    </form>
-    <p>Ainda não tem uma conta? <a href="/cadastro">Cadastre-se aqui</a></p>
 
-    <script src="../js/loginUser.js"></script>
+  <!-- ASIDE: Apresentação Visual Lateral (Semântico e Acessível) -->
+  <aside class="left" aria-label="Apresentação Visual">
+    <img class="bg"
+      src="../assets/img/fundo-log-cad.jpg"
+      alt="Natureza amazónica exuberante com rios e floresta"
+      fetchpriority="high"
+    />
+
+    <div class="tagline">
+      <h2>ENTRE NA SUA PRÓXIMA<span>EXPERIÊNCIA!</span></h2>
+    </div>
+  </aside>
+
+  <!-- MAIN: Conteúdo Principal do Documento (Semântica de topo para SEO) -->
+  <main class="right">
+    
+    <!-- FORM: Formulário estruturado para envio de dados seguros -->
+    <form id="formLogin" class="form-wrap" method="POST" action="#">
+      <h1 class="form-title">FAÇA LOGIN</h1>
+      <p class="form-subtitle">Faça login com o endereço de e-mail</p>
+
+      <!-- Grupo de Input: E-mail -->
+      <div class="input-group">
+        <label for="email" class="sr-only">Seu e-mail</label>
+        <span class="icon" aria-hidden="true">
+          <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383-4.758 2.855L15 11.114V5.383zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741zM1 11.114l4.758-2.876L1 5.383v5.731z"/>
+          </svg>
+        </span>
+        <input type="email" id="email" name="email" placeholder="Seu e-mail" required />
+      </div>
+
+      <!-- Grupo de Input: Senha -->
+      <div class="input-group">
+        <label for="senha" class="sr-only">Sua senha</label>
+        <span class="icon" aria-hidden="true">
+          <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+          </svg>
+        </span>
+        <input type="password" id="senha" name="senha" placeholder="Sua senha" required />
+      </div>
+
+      <!-- Linha de Botões de Ação -->
+      <div class="btn-row">
+        <a href="/cadastro" class="btn-cadastro" id="btnCadastro">Cadastre-se</a>
+        <button type="submit" class="btn-login active" id="btnLogin">Entrar</button>
+      </div>
+
+      <!-- Parágrafo de cadastro alternativo -->
+      <p class="alternative-register">Ainda não tem uma conta? <a href="/cadastro">Cadastre-se aqui</a></p>
+
+      <!-- Divisor Semântico -->
+      <div class="divider">
+        <hr/><span>Ou continue com</span><hr/>
+      </div>
+
+      <!-- Botões de Login Social (com type="button" para não submeter o formulário principal) -->
+      <div class="social-row">
+        <button type="button" class="btn-social" id="btnGoogle">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            <path fill="none" d="M0 0h48v48H0z"/>
+          </svg>
+          Google
+        </button>
+        <button type="button" class="btn-social" id="btnFacebook">
+          <svg viewBox="0 0 24 24" fill="#1877F2" aria-hidden="true">
+            <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.532-4.697 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.49 0-1.955.93-1.955 1.887v2.26h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+          </svg>
+          Facebook
+        </button>
+      </div>
+
+      <!-- FOOTER: Rodapé Interno do Formulário com Termos Legais -->
+      <footer class="terms">
+        <p>
+          Ao se cadastrar, você concorda com nossos<br>
+          <a href="#">Termos e Condições</a>
+        </p>
+      </footer>
+    </form>
+  </main>
+
+  <!-- Script para carregar a animação suave de entrada -->
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      document.body.classList.add('loaded');
+    });
+  </script>
+
+  <!-- Script Principal de Login Integrado -->
+  <script src="../js/loginUser.js"></script>
 </body>
 </html>

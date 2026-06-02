@@ -1,4 +1,3 @@
-
 # Norte Eventos
 
 Sistema web para cadastro, organização e gerenciamento de eventos locais.
@@ -141,7 +140,3 @@ O servidor estará disponível em: `http://localhost:3000`
 * Izabel Lima
 * Mariana Melo
 * Williane Gadelha
-
-```
-
-```

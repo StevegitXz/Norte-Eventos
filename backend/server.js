@@ -11,6 +11,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend')));
 app.use('/api/usuarios', usuarioRouter); 
+const eventoRouter = require('./src/routers/eventoRouter');
+app.use('/api/eventos', verificarAutenticacao, eventoRouter);
 
 // Rota da página Inicial
 app.get('/', (req, res) => {

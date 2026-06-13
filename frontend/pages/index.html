@@ -4,13 +4,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Norte Eventos</title>
+    <title>Norte Eventos — Início</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="../css/tailwind.css">
 </head>
 
-<body>
-    <h1>Bem-vindo ao Norte Eventos</h1>
+<body class="bg-brand-light font-sans text-brand-dark antialiased">
+    
+    <!-- Hero Section -->
+    <main class="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-white">
+        
+        <!-- Background Decoration -->
+        <div class="absolute inset-0 z-0">
+            <div class="absolute -top-40 -right-40 w-96 h-96 bg-brand-green/20 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-3xl transform translate-x-[-20%] translate-y-[20%]"></div>
+        </div>
 
-    <a href="/login"><button style="padding: 10px 20px; cursor: pointer;">Fazer Login / Entrar</button></a>
+        <div class="relative z-10 text-center px-4 max-w-3xl">
+            <h1 class="text-5xl md:text-6xl font-display font-black tracking-tight text-brand-darker mb-6">
+                Bem-vindo ao <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-green to-emerald-600">Norte Eventos</span>
+            </h1>
+            
+            <p class="text-lg md:text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
+                A plataforma completa para você descobrir e organizar os melhores eventos da região amazônica. Conecte-se com experiências incríveis.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="/login" class="btn-primary w-full sm:w-auto shadow-lg shadow-brand-green/30 px-8 py-4 text-base">
+                    Acessar minha conta
+                </a>
+                <a href="/cadastro" class="btn-secondary w-full sm:w-auto px-8 py-4 text-base">
+                    Criar nova conta
+                </a>
+            </div>
+        </div>
+    </main>
+
 </body>
 
 </html>

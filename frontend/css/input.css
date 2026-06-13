@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@source "../../frontend/**/*.html";
+@source "../../frontend/**/*.js";
+
+@theme {
+  --color-brand-green: #6ed44a;
+  --color-brand-dark: #0d1f2d;
+  --color-brand-darker: #09151e;
+  --color-brand-light: #f8fafc;
+  --color-brand-muted: #a0aec0;
+  
+  --font-sans: "Inter", sans-serif;
+  --font-display: "Montserrat", sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-brand-light);
+    color: var(--color-brand-dark);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-brand-green hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-green transition-colors duration-200;
+  }
+  
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-green transition-colors duration-200;
+  }
+
+  .input-field {
+    @apply block w-full px-4 py-3 rounded-lg border-gray-300 shadow-sm focus:ring-brand-green focus:border-brand-green sm:text-sm border transition-colors bg-white outline-none;
+  }
+  
+  .card-gradient-1 { @apply bg-gradient-to-r from-teal-500 to-emerald-500 text-white; }
+  .card-gradient-2 { @apply bg-gradient-to-r from-blue-600 to-indigo-600 text-white; }
+  .card-gradient-3 { @apply bg-gradient-to-r from-purple-600 to-pink-500 text-white; }
+}

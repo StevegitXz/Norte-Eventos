@@ -111,6 +111,21 @@ CREATE TABLE usuarios (
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE eventos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    nome VARCHAR(150) NOT NULL,
+    categoria VARCHAR(50) NOT NULL,
+    capacidade INT NOT NULL,
+    data DATE NOT NULL,
+    hora TIME NOT NULL,
+    local VARCHAR(255) NOT NULL,
+    descricao TEXT,
+    bannerClass VARCHAR(50),
+    inscritos INT DEFAULT 0,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+);
 ```
 
 ### 5. Execução

@@ -17,6 +17,9 @@ function verificarAutenticacao(req, res, next) {
 
 
 if (!token) {
+    if (req.originalUrl && req.originalUrl.startsWith('/api')) {
+        return res.status(401).json({ erro: 'Não autorizado. Faça login.' });
+    }
     return res.redirect('/login');
 }
 
@@ -25,6 +28,9 @@ try {
     req.usuarioLogado = tokenDecodificado; 
     next(); 
 } catch (erro) {
+    if (req.originalUrl && req.originalUrl.startsWith('/api')) {
+        return res.status(401).json({ erro: 'Token inválido ou expirado. Faça login.' });
+    }
     return res.redirect('/login'); 
 }
 }

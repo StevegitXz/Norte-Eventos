@@ -53,6 +53,12 @@
                             <span>Início</span>
                         </a>
                     </li>
+                    <li class="menu-item" data-target="#explore-events">
+                        <a href="#explore-events" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 font-medium hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-brand-green transition-colors [.active_&]:bg-brand-green/10 dark:[.active_&]:bg-brand-green/20 [.active_&]:text-brand-green">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+                            <span>Explorar Eventos</span>
+                        </a>
+                    </li>
                     <li class="menu-item" data-target="#my-events">
                         <a href="#my-events" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 font-medium hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-brand-green transition-colors [.active_&]:bg-brand-green/10 dark:[.active_&]:bg-brand-green/20 [.active_&]:text-brand-green">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
@@ -183,11 +189,32 @@
                     </div>
                 </section>
 
-                <!-- VIEW 2: MY EVENTS -->
+                <!-- VIEW 2: EXPLORAR EVENTOS -->
+                <section class="tab-content max-w-7xl mx-auto" id="explore-events">
+                    <!-- Filters & Sort Header -->
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 filters-row">
+                        <div class="flex overflow-x-auto hide-scrollbar gap-2 pb-2 md:pb-0 filters-group explore-filters-group">
+                            <button class="filter-btn active px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 [.active&]:bg-brand-dark dark:[.active&]:bg-brand-green [.active&]:text-white transition-colors" data-category="Tudo">Todos</button>
+                            <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 [.active&]:bg-brand-dark dark:[.active&]:bg-brand-green [.active&]:text-white transition-colors" data-category="Cultura">Cultura</button>
+                            <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 [.active&]:bg-brand-dark dark:[.active&]:bg-brand-green [.active&]:text-white transition-colors" data-category="Gastronomia">Gastronomia</button>
+                            <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 [.active&]:bg-brand-dark dark:[.active&]:bg-brand-green [.active&]:text-white transition-colors" data-category="Tecnologia">Tecnologia</button>
+                            <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 [.active&]:bg-brand-dark dark:[.active&]:bg-brand-green [.active&]:text-white transition-colors" data-category="Negócios">Negócios</button>
+                            <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 [.active&]:bg-brand-dark dark:[.active&]:bg-brand-green [.active&]:text-white transition-colors" data-category="Esportes">Esportes</button>
+                            <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 [.active&]:bg-brand-dark dark:[.active&]:bg-brand-green [.active&]:text-white transition-colors" data-category="Outros">Outros</button>
+                        </div>
+                    </div>
+
+                    <!-- Explore Events List Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 events-grid" id="explore-events-list">
+                        <!-- Filled dynamically by JS -->
+                    </div>
+                </section>
+
+                <!-- VIEW 3: MY EVENTS -->
                 <section class="tab-content max-w-7xl mx-auto" id="my-events">
                     <!-- Filters & Sort Header -->
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 filters-row">
-                        <div class="flex overflow-x-auto hide-scrollbar gap-2 pb-2 md:pb-0 filters-group">
+                        <div class="flex overflow-x-auto hide-scrollbar gap-2 pb-2 md:pb-0 filters-group my-events-filters-group">
                             <button class="filter-btn active px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 [.active&]:bg-brand-dark dark:[.active&]:bg-brand-green [.active&]:text-white transition-colors" data-category="Tudo">Todos</button>
                             <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 [.active&]:bg-brand-dark dark:[.active&]:bg-brand-green [.active&]:text-white transition-colors" data-category="Cultura">Cultura</button>
                             <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 [.active&]:bg-brand-dark dark:[.active&]:bg-brand-green [.active&]:text-white transition-colors" data-category="Gastronomia">Gastronomia</button>
@@ -213,7 +240,7 @@
                     </div>
                 </section>
 
-                <!-- VIEW 3: CREATE/EDIT EVENT FORM -->
+                <!-- VIEW 4: CREATE/EDIT EVENT FORM -->
                 <section class="tab-content max-w-4xl mx-auto" id="create-event">
                     <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 p-6 sm:p-8 form-card">
                         <h3 id="form-view-title" class="text-2xl font-display font-bold text-brand-darker dark:text-white mb-8 border-b border-gray-100 dark:border-slate-800 pb-4">Organizar Novo Evento</h3>
@@ -264,9 +291,15 @@
                                     <input type="text" id="event-local" class="input-field dark:bg-slate-800 dark:border-slate-700 dark:text-white" placeholder="Ex: Teatro Amazonas, Largo de São Sebastião" required>
                                 </div>
 
-                                <!-- Predefined Banner Selector (Gradient Cards) -->
+                                <!-- Image Upload -->
                                 <div class="col-span-1 md:col-span-2 form-group">
-                                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Estilo visual do cartão (Gradiente) *</label>
+                                    <label for="event-image" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Imagem de Capa do Evento (Opcional)</label>
+                                    <input type="file" id="event-image" accept="image/*" class="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-green/10 file:text-brand-green hover:file:bg-brand-green/20 transition-colors border border-gray-200 dark:border-slate-700 rounded-lg bg-gray-50 dark:bg-slate-800 outline-none">
+                                </div>
+
+                                <!-- Predefined Banner Selector (Gradient Cards - Fallback) -->
+                                <div class="col-span-1 md:col-span-2 form-group">
+                                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Cor do Banner (Se não enviar imagem)</label>
                                     <div class="flex flex-wrap gap-3 banner-selector-row">
                                         <div class="w-10 h-10 min-w-[40px] min-h-[40px] rounded-full cursor-pointer ring-offset-2 ring-2 ring-transparent dark:ring-offset-slate-900 transition-all hover:scale-110 [.selected]:ring-teal-500 banner-option event-card-gradient-1 selected" data-gradient="event-card-gradient-1" title="Verde Esmeralda"></div>
                                         <div class="w-10 h-10 min-w-[40px] min-h-[40px] rounded-full cursor-pointer ring-offset-2 ring-2 ring-transparent dark:ring-offset-slate-900 transition-all hover:scale-110 [.selected]:ring-blue-600 banner-option event-card-gradient-2" data-gradient="event-card-gradient-2" title="Azul Profundo"></div>
@@ -293,6 +326,83 @@
                         </form>
                     </div>
                 </section>
+
+                <!-- VIEW 5: MANAGE EVENT DETAILS -->
+                <section class="tab-content max-w-5xl mx-auto hidden" id="manage-event">
+                    <!-- Header Actions -->
+                    <div class="flex items-center justify-between mb-6">
+                        <button class="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-brand-dark dark:text-gray-400 dark:hover:text-gray-200 transition-colors" id="btn-back-to-events">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                            Voltar para Meus Eventos
+                        </button>
+                    </div>
+
+                    <!-- Event Banner & Basic Info -->
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden mb-8">
+                        <div id="manage-event-banner" class="h-48 md:h-64 w-full bg-cover bg-center event-card-gradient-1"></div>
+                        <div class="p-6 md:p-8 relative">
+                            <div class="inline-block px-4 py-1.5 bg-brand-green/10 text-brand-green font-bold text-xs rounded-full uppercase tracking-wider mb-4" id="manage-event-category">Categoria</div>
+                            <h2 class="text-3xl font-display font-black text-gray-900 dark:text-white mb-2 leading-tight" id="manage-event-title">Nome do Evento</h2>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm md:text-base mb-6" id="manage-event-desc">Descrição do evento vai aqui...</p>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-slate-800/50 p-4 rounded-xl">
+                                    <div class="p-2 bg-white dark:bg-slate-800 rounded-lg shadow-sm text-brand-green">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                    </div>
+                                    <div>
+                                        <span class="block text-xs text-gray-500 font-medium mb-0.5">Data e Hora</span>
+                                        <span class="font-semibold" id="manage-event-datetime">00/00/0000 às 00:00</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-slate-800/50 p-4 rounded-xl">
+                                    <div class="p-2 bg-white dark:bg-slate-800 rounded-lg shadow-sm text-blue-500">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                    </div>
+                                    <div>
+                                        <span class="block text-xs text-gray-500 font-medium mb-0.5">Local</span>
+                                        <span class="font-semibold" id="manage-event-location">Localização</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Participants Section -->
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden mb-12">
+                        <div class="px-6 py-5 border-b border-gray-100 dark:border-slate-800 flex items-center justify-between">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" class="text-brand-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                    Participantes
+                                </h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1" id="manage-event-stats">0 de 0 inscritos</p>
+                            </div>
+                        </div>
+
+                        <!-- Participants List -->
+                        <div class="p-6 overflow-y-auto max-h-[400px] custom-scrollbar bg-gray-50/30 dark:bg-slate-900/30">
+                            <div id="participants-list-container" class="space-y-3">
+                                <!-- JS injected participants -->
+                                <div class="text-center text-sm text-gray-500 py-8">Carregando participantes...</div>
+                            </div>
+                        </div>
+
+                        <!-- Add Participant Form -->
+                        <div class="p-6 border-t border-gray-100 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/20">
+                            <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                Adicionar Inscrição Manualmente
+                            </h4>
+                            <form id="form-add-participant" class="flex flex-col sm:flex-row gap-3">
+                                <input type="email" id="input-add-participant-email" class="input-field py-2.5 flex-1 dark:bg-slate-800 dark:border-slate-700 dark:text-white" placeholder="Digite o e-mail do usuário cadastrado" required>
+                                <button type="submit" class="btn-primary py-2.5 px-6 whitespace-nowrap" id="btn-submit-add-participant">
+                                    Adicionar ao Evento
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
             </div>
         </main>
 
@@ -302,9 +412,13 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 min-w-[24px] mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
                 <span class="text-[10px] font-semibold">Início</span>
             </a>
+            <a href="#explore-events" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-brand-green [.active]:text-brand-green dark:[.active]:text-brand-green dark:text-gray-400 mobile-nav-item" data-target="#explore-events">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 min-w-[24px] mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+                <span class="text-[10px] font-semibold">Explorar</span>
+            </a>
             <a href="#my-events" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-brand-green [.active]:text-brand-green dark:[.active]:text-brand-green dark:text-gray-400 mobile-nav-item" data-target="#my-events">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 min-w-[24px] mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                <span class="text-[10px] font-semibold">Eventos</span>
+                <span class="text-[10px] font-semibold">Meus Eventos</span>
             </a>
             <a href="#create-event" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-brand-green [.active]:text-brand-green dark:[.active]:text-brand-green dark:text-gray-400 mobile-nav-item" data-target="#create-event">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 min-w-[24px] mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
@@ -313,8 +427,9 @@
         </nav>
     </div>
 
+
     <!-- MODAL: DELETE CONFIRMATION -->
-    <div class="fixed inset-0 z-[100] flex items-center justify-center bg-brand-darker/60 dark:bg-slate-950/80 backdrop-blur-sm modal-overlay" id="modal-delete-confirm" role="dialog" aria-modal="true" aria-labelledby="modal-delete-title">
+    <div class="fixed inset-0 z-[100] flex items-center justify-center bg-brand-darker/60 dark:bg-slate-950/80 backdrop-blur-sm modal-overlay hidden" id="modal-delete-confirm" role="dialog" aria-modal="true" aria-labelledby="modal-delete-title">
         <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden modal-container border border-transparent dark:border-slate-800">
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800/50 modal-header">
                 <h3 id="modal-delete-title" class="font-display font-bold text-gray-800 dark:text-gray-100">Confirmar Exclusão</h3>
@@ -337,6 +452,7 @@
     </div>
 
     <!-- JavaScript Controller -->
+    <script src="../js/toast.js"></script>
     <script src="../js/dashboard.js"></script>
 </body>
 </html>

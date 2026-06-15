@@ -14,6 +14,29 @@ app.use('/api/usuarios', usuarioRouter);
 const eventoRouter = require('./src/routers/eventoRouter');
 app.use('/api/eventos', verificarAutenticacao, eventoRouter);
 
+const multer = require('multer');
+
+// Configuração do Multer para upload de imagens
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, '../frontend/uploads/'));
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
+});
+const upload = multer({ storage: storage });
+
+// Rota de Upload
+app.post('/api/upload', verificarAutenticacao, upload.single('imagem'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ erro: 'Nenhuma imagem foi enviada.' });
+  }
+  // Retorna o caminho relativo que será salvo no banco e lido pelo frontend
+  res.status(200).json({ url: `/uploads/${req.file.filename}` });
+});
+
 // Rota da página Inicial
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/pages/index.html'));

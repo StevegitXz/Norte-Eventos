@@ -12,7 +12,7 @@ async function migrate() {
     });
     console.log('✅ Conexão estabelecida.');
     
-    const query = `
+    const queryEventos = `
       CREATE TABLE IF NOT EXISTS eventos (
           id INT AUTO_INCREMENT PRIMARY KEY,
           usuario_id INT NOT NULL,
@@ -24,14 +24,37 @@ async function migrate() {
           local VARCHAR(255) NOT NULL,
           descricao TEXT,
           bannerClass VARCHAR(50),
+          imagem_url VARCHAR(255),
           inscritos INT DEFAULT 0,
           criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
       );
     `;
     
-    await connection.query(query);
-    console.log('✅ Tabela "eventos" criada ou já existente.');
+    await connection.query(queryEventos);
+    console.log('✅ Tabela "eventos" garantida.');
+
+    // Add imagem_url column if it doesn't exist (for existing tables)
+    try {
+      await connection.query('ALTER TABLE eventos ADD COLUMN imagem_url VARCHAR(255)');
+      console.log('✅ Coluna "imagem_url" adicionada à tabela eventos.');
+    } catch (e) {
+      // Ignorar se a coluna já existir (código de erro 1060)
+      if (e.code !== 'ER_DUP_FIELDNAME') throw e;
+    }
+
+    const queryInscricoes = `
+      CREATE TABLE IF NOT EXISTS inscricoes (
+          usuario_id INT NOT NULL,
+          evento_id INT NOT NULL,
+          data_inscricao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          PRIMARY KEY (usuario_id, evento_id),
+          FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+          FOREIGN KEY (evento_id) REFERENCES eventos(id) ON DELETE CASCADE
+      );
+    `;
+    await connection.query(queryInscricoes);
+    console.log('✅ Tabela "inscricoes" garantida.');
     
     await connection.end();
   } catch (error) {

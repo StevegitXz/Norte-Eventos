@@ -7,9 +7,12 @@ Sistema web para cadastro, organização e gerenciamento de eventos locais.
 O **Norte Eventos** é um projeto acadêmico desenvolvido para a disciplina de **Práticas de Programação**, sob a orientação do professor **Álvaro**.
 
 O sistema utiliza a arquitetura **MVC (Model-View-Controller)** e contempla as seguintes funcionalidades:
-- Cadastro e autenticação de usuários com criptografia de senha.
-- Controle de sessões via tokens JWT armazenados em cookies.
-- Proteção e restrição de rotas privadas (Dashboard).
+- Cadastro e autenticação de usuários com criptografia de senha (bcrypt).
+- Controle de sessões altamente seguro via JWT armazenados em cookies `HttpOnly` e política rigorosa de CORS.
+- Proteção avançada do servidor com `express-rate-limit` contra ataques de força bruta (Brute Force).
+- Validação e restrição de Uploads via `multer`.
+- Interface reativa com sistema de notificações (Toasts) personalizadas.
+- Proteção e restrição de rotas privadas (Dashboard e API de Eventos).
 - Sistema de inscrição e gerenciamento de eventos.
 
 ---
@@ -19,9 +22,10 @@ O sistema utiliza a arquitetura **MVC (Model-View-Controller)** e contempla as s
 - **Ambiente:** Node.js
 - **Framework Web:** Express
 - **Banco de Dados:** MySQL (Driver `mysql2`)
-- **Segurança:** `jsonwebtoken` (JWT), `bcrypt`, `cookie-parser`
-- **Frontend:** HTML5, JavaScript (ES6+ / Fetch API), Tailwind CSS
-- **Ferramentas:** `dotenv`, `nodemon`, `cors`
+- **Segurança e Proteção:** `jsonwebtoken` (JWT), `bcrypt`, `cookie-parser`, `express-rate-limit`, Validação Rigorosa de Uploads.
+- **Frontend:** HTML5, CSS3, JavaScript (ES6+ / Fetch API), Tailwind CSS
+- **Notificações UI:** Sistema de Toasts dinâmico em JavaScript puro.
+- **Ferramentas e Middlewares:** `dotenv`, `nodemon`, `cors`, `multer`
 
 ---
 
@@ -122,9 +126,20 @@ CREATE TABLE eventos (
     local VARCHAR(255) NOT NULL,
     descricao TEXT,
     bannerClass VARCHAR(50),
+    imagem_url VARCHAR(255),
     inscritos INT DEFAULT 0,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+);
+
+CREATE TABLE inscricoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    evento_id INT NOT NULL,
+    data_inscricao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (evento_id) REFERENCES eventos(id) ON DELETE CASCADE,
+    UNIQUE(usuario_id, evento_id)
 );
 ```
 

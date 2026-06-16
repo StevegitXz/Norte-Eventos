@@ -5,24 +5,26 @@ document.getElementById('formLogin').addEventListener('submit', async (e) => {
     const senha = document.getElementById('senha').value;
 
     try {
+        // Usar a URL absoluta do backend local para evitar problemas se usar Live Server
         const resposta = await fetch('http://localhost:3000/api/usuarios/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include', // Necessário para enviar e receber cookies entre 127.0.0.1 e localhost
             body: JSON.stringify({ email, senha })
         });
 
         const dados = await resposta.json();
 
         if (resposta.ok) {
-            document.cookie = `norte_eventos_token=${dados.token}; path=/; max-age=7200`;
-
-            alert('Logado com sucesso!');
-            window.location.href = '/dashboard';
+            showToast('Logado com sucesso!', 'success');
+            setTimeout(() => {
+                window.location.href = 'http://localhost:3000/dashboard';
+            }, 1000);
         } else {
-            alert('Erro no login: ' + dados.erro);
+            showToast('Erro no login: ' + dados.erro, 'error');
         }
     } catch (erro) {
-        alert('Não foi possível conectar ao servidor.');
+        showToast('Não foi possível conectar ao servidor.', 'error');
     }
 });
 
@@ -45,18 +47,7 @@ document.getElementById('btnCadastro').addEventListener('click', () => {
   window.location.href = 'index.html';
 });
 
-document.getElementById('btnLogin').addEventListener('click', () => {
-  const email    = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value.trim();
 
-  if (!email || !password) {
-    alert('Por favor, preencha e-mail e senha.');
-    return;
-  }
-
-  console.log('Login enviado:', { email });
-  alert('Login realizado com sucesso!');
-});
 
 document.getElementById('btnGoogle').addEventListener('click', () => {
   console.log('Entrar com Google');

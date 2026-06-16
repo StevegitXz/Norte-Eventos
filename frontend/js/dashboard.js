@@ -2,16 +2,17 @@
    Norte Eventos — Dashboard JS Logic
    ========================================================================== */
 
-document.addEventListener('DOMContentLoaded', () => {
-  // 1. AUTHENTICATION CHECK
-  const token = getCookie('norte_eventos_token');
-  if (!token) {
-    window.location.href = '/login';
-    return;
-  }
-
-  const userData = parseJwt(token);
-  if (!userData) {
+document.addEventListener('DOMContentLoaded', async () => {
+  // 1. AUTHENTICATION CHECK & FETCH USER DATA
+  let userData = null;
+  try {
+    const resAuth = await fetch('/api/usuarios/me');
+    if (!resAuth.ok) {
+      window.location.href = '/login';
+      return;
+    }
+    userData = await resAuth.json();
+  } catch (err) {
     window.location.href = '/login';
     return;
   }
@@ -40,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Display User Information
   const userEmail = userData.email || 'organizador@norteeventos.com';
-  const userName = extractUsername(userEmail);
+  const userName = userData.nome || extractUsername(userEmail);
   
   document.querySelectorAll('.user-name-display').forEach(el => {
     el.textContent = userName;
@@ -796,12 +797,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // 9. LOG OUT LOGIC
   const btnLogout = document.getElementById('btn-logout');
   if (btnLogout) {
-    btnLogout.addEventListener('click', (e) => {
+    btnLogout.addEventListener('click', async (e) => {
       e.preventDefault();
-      // Remove token cookie by setting past expiration date
-      document.cookie = 'norte_eventos_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0';
-      alert('Sessão finalizada com sucesso. Até logo!');
-      window.location.href = '/login';
+      try {
+        await fetch('/api/usuarios/logout', { method: 'POST' });
+      } catch (error) {
+        console.error('Erro ao fazer logout', error);
+      }
+      showToast('Sessão finalizada com sucesso. Até logo!', 'success');
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 1000);
     });
   }
 

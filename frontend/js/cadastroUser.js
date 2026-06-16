@@ -6,7 +6,7 @@ document.getElementById('formCadastro').addEventListener('submit', async (e) => 
     const senha = document.getElementById('senha').value;
 
     try {
-        const resposta = await fetch('http://localhost:3000/api/usuarios', {
+        const resposta = await fetch('/api/usuarios', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ nome, email, senha })

@@ -4,13 +4,32 @@ const path = require('path');
 const cors = require('cors'); 
 const usuarioRouter = require('./src/routers/usuarioRouter');
 const verificarAutenticacao = require('./src/middlewares/authMiddleware');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 
-app.use(cors()); 
+// Configuração do Rate Limit para rotas de autenticação
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 15, // Limita a 15 requisições por IP a cada 15 minutos
+  message: { erro: 'Muitas tentativas de acesso. Por favor, tente novamente mais tarde.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Configuração do CORS para permitir cookies cruzados em dev local
+app.use(cors({
+  origin: function (origin, callback) {
+    callback(null, true); // Permite qualquer origem em desenvolvimento
+  },
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend')));
-app.use('/api/usuarios', usuarioRouter); 
+
+// Aplica o limiter APENAS nas rotas de usuario (login/cadastro)
+app.use('/api/usuarios', authLimiter, usuarioRouter); 
+
 const eventoRouter = require('./src/routers/eventoRouter');
 app.use('/api/eventos', verificarAutenticacao, eventoRouter);
 
@@ -26,15 +45,44 @@ const storage = multer.diskStorage({
     cb(null, uniqueSuffix + path.extname(file.originalname));
   }
 });
-const upload = multer({ storage: storage });
+
+// Filtro de segurança para extensões de arquivo
+const fileFilter = (req, file, cb) => {
+  const allowedTypes = /jpeg|jpg|png|webp/;
+  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = allowedTypes.test(file.mimetype);
+
+  if (extname && mimetype) {
+    return cb(null, true);
+  } else {
+    cb(new Error('Apenas imagens (jpeg, jpg, png, webp) são permitidas!'));
+  }
+};
+
+const upload = multer({ 
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // Limite de 5MB
+  fileFilter: fileFilter
+});
 
 // Rota de Upload
-app.post('/api/upload', verificarAutenticacao, upload.single('imagem'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ erro: 'Nenhuma imagem foi enviada.' });
-  }
-  // Retorna o caminho relativo que será salvo no banco e lido pelo frontend
-  res.status(200).json({ url: `/uploads/${req.file.filename}` });
+app.post('/api/upload', verificarAutenticacao, (req, res) => {
+  upload.single('imagem')(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      // Erro do Multer (ex: tamanho do arquivo excedido)
+      return res.status(400).json({ erro: `Erro no upload: ${err.message}` });
+    } else if (err) {
+      // Erro personalizado (ex: tipo de arquivo inválido)
+      return res.status(400).json({ erro: err.message });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ erro: 'Nenhuma imagem válida foi enviada.' });
+    }
+    
+    // Retorna o caminho relativo que será salvo no banco e lido pelo frontend
+    res.status(200).json({ url: `/uploads/${req.file.filename}` });
+  });
 });
 
 // Rota da página Inicial

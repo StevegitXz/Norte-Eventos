@@ -6,21 +6,17 @@ async function cadastrar(req, res) {
   try {
     const { nome, email, senha } = req.body;
 
-
     if (!nome || !email || !senha) {
       return res.status(400).json({ erro: 'Preencha todos os campos obrigatórios.' });
     }
-
 
     const usuarioExiste = await usuarioModel.buscarPorEmail(email);
     if (usuarioExiste) {
       return res.status(400).json({ erro: 'Este e-mail já está em uso.' });
     }
 
-
     const saltos = await bcrypt.genSalt(10);
     const senhaCriptografada = await bcrypt.hash(senha, saltos);
-
 
     const novoUsuario = await usuarioModel.salvar({
       nome,
@@ -39,8 +35,6 @@ async function cadastrar(req, res) {
   }
 }
 
-
-// LOGIN controller
 async function login(req, res) {
   try {
     const { email, senha } = req.body;
@@ -60,14 +54,19 @@ async function login(req, res) {
     }
 
     const token = jwt.sign(
-      { id: usuario.id, email: usuario.email }, 
+      { id: usuario.id, email: usuario.email, nome: usuario.nome }, 
       process.env.JWT_SECRET,                  
       { expiresIn: '2h' }                      
     );
 
+    res.cookie('norte_eventos_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 2 * 60 * 60 * 1000
+    });
+
     return res.status(200).json({
-      mensagem: 'Login realizado com sucesso!',
-      token: token
+      mensagem: 'Login realizado com sucesso!'
     });
 
   } catch (error) {
@@ -76,7 +75,25 @@ async function login(req, res) {
   }
 }
 
+async function logout(req, res) {
+  res.clearCookie('norte_eventos_token');
+  return res.status(200).json({ mensagem: 'Logout realizado com sucesso!' });
+}
+
+async function obterUsuarioLogado(req, res) {
+  if (!req.usuarioLogado) {
+    return res.status(401).json({ erro: 'Não autorizado.' });
+  }
+  return res.status(200).json({ 
+    id: req.usuarioLogado.id, 
+    nome: req.usuarioLogado.nome, 
+    email: req.usuarioLogado.email 
+  });
+}
+
 module.exports = {
   cadastrar,
-  login 
+  login,
+  logout,
+  obterUsuarioLogado
 };

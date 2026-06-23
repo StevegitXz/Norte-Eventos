@@ -57,6 +57,6 @@ const btnConta = document.querySelector('.btn-minha-conta');
 if (btnConta) {
   btnConta.addEventListener('click', (e) => {
     e.preventDefault();
-    window.location.href = 'login.html';
+    window.location.href = '/login';
   });
 }

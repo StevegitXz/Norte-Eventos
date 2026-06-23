@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const path = require('path');
+const jwt = require('jsonwebtoken');
 const verificarAutenticacao = require('./src/middlewares/authMiddleware');
 const rateLimit = require('express-rate-limit');
 
@@ -95,7 +96,20 @@ app.post('/api/upload', verificarAutenticacao, (req, res) => {
 
 // Rota da página Inicial
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/pages/index.html'));
+    // Verifica se o usuário já tem um token válido no cookie
+    const token = req.cookies.norte_eventos_token;
+    if (token) {
+        try {
+            // Se o token for válido, manda direto pra Dashboard
+            jwt.verify(token, process.env.JWT_SECRET);
+            return res.redirect('/dashboard');
+        } catch (error) {
+            // Token inválido/expirado, ignora e mostra a Home
+        }
+    }
+    
+    // Se não tem token ou é inválido, exibe a Home normal
+    res.sendFile(path.join(__dirname, '../frontend/pages/Home.html'));
 });
 
 // Rota da página de Login

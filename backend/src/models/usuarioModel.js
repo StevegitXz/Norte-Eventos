@@ -22,7 +22,26 @@ async function salvar(dadosUsuario) {
   };
 }
 
+async function atualizar(id, nome, email) {
+  try {
+    const query = 'UPDATE usuarios SET nome = ?, email = ? WHERE id = ?';
+    const [resultado] = await pool.execute(query, [nome, email, id]);
+    return resultado.affectedRows > 0;
+  } catch (error) {
+    if (error.code === 'ER_DUP_ENTRY') return false; // Email em uso
+    throw error;
+  }
+}
+
+async function excluir(id) {
+  const query = 'DELETE FROM usuarios WHERE id = ?';
+  const [resultado] = await pool.execute(query, [id]);
+  return resultado.affectedRows > 0;
+}
+
 module.exports = {
   buscarPorEmail,
-  salvar
+  salvar,
+  atualizar,
+  excluir
 };

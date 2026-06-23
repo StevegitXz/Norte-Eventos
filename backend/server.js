@@ -1,10 +1,14 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const path = require('path');
-const cors = require('cors'); 
-const usuarioRouter = require('./src/routers/usuarioRouter');
 const verificarAutenticacao = require('./src/middlewares/authMiddleware');
 const rateLimit = require('express-rate-limit');
+
+const usuarioRouter = require('./src/routers/usuarioRouter');
+const eventoRouter = require('./src/routers/eventoRouter');
+const notificacaoRouter = require('./src/routers/notificacaoRouter');
 
 const app = express();
 
@@ -24,14 +28,18 @@ app.use(cors({
   },
   credentials: true
 }));
+
 app.use(express.json());
+app.use(cookieParser());
+
+// Servir arquivos estáticos do frontend e uploads
 app.use(express.static(path.join(__dirname, '../frontend')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Aplica o limiter APENAS nas rotas de usuario (login/cadastro)
-app.use('/api/usuarios', authLimiter, usuarioRouter); 
-
-const eventoRouter = require('./src/routers/eventoRouter');
+// Rotas da API
+app.use('/api/usuarios', authLimiter, usuarioRouter);
 app.use('/api/eventos', verificarAutenticacao, eventoRouter);
+app.use('/api/notificacoes', verificarAutenticacao, notificacaoRouter);
 
 const multer = require('multer');
 

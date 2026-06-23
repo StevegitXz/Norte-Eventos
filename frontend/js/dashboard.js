@@ -49,6 +49,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('.user-email-display').forEach(el => {
     el.textContent = userEmail;
   });
+
+  // Preencher dados nas Configurações
+  const inputNome = document.getElementById('settings-nome');
+  const inputEmail = document.getElementById('settings-email');
+  if(inputNome) inputNome.value = userName;
+  if(inputEmail) inputEmail.value = userEmail;
+
+  // Carregar notificações ao iniciar
+  loadNotifications();
   document.querySelectorAll('.avatar').forEach(el => {
     el.textContent = userName.substring(0, 2).toUpperCase();
   });
@@ -813,6 +822,145 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 10. RUN INITIAL RENDER
   loadEventsFromServer();
+
+  // ==========================================
+  // NOTIFICATIONS LOGIC
+  // ==========================================
+  const btnNotifs = document.getElementById('btn-notifications');
+  const notifDropdown = document.getElementById('notif-dropdown');
+  const notifBadge = document.getElementById('notif-badge');
+  const notifList = document.getElementById('notif-list');
+  const btnClearNotifs = document.getElementById('btn-clear-notifs');
+
+  if (btnNotifs && notifDropdown) {
+    btnNotifs.addEventListener('click', () => {
+      notifDropdown.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!btnNotifs.contains(e.target) && !notifDropdown.contains(e.target)) {
+        notifDropdown.classList.add('hidden');
+      }
+    });
+  }
+
+  async function loadNotifications() {
+    try {
+      const res = await fetch('/api/notificacoes');
+      if (res.ok) {
+        const notifs = await res.json();
+        renderNotifications(notifs);
+      }
+    } catch (err) {
+      console.error('Erro ao carregar notificações', err);
+    }
+  }
+
+  function renderNotifications(notifs) {
+    if (!notifList || !notifBadge) return;
+    
+    notifList.innerHTML = '';
+    const unreadCount = notifs.filter(n => !n.lida).length;
+
+    if (unreadCount > 0) {
+      notifBadge.classList.remove('hidden');
+    } else {
+      notifBadge.classList.add('hidden');
+    }
+
+    if (notifs.length === 0) {
+      notifList.innerHTML = '<div class="text-center text-sm text-gray-500 p-4">Nenhuma notificação nova.</div>';
+      return;
+    }
+
+    notifs.forEach(n => {
+      const div = document.createElement('div');
+      div.className = `p-3 text-sm rounded-lg border-b border-gray-100 dark:border-slate-700/50 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors ${n.lida ? 'opacity-60' : 'bg-brand-green/5 dark:bg-brand-green/10'}`;
+      div.innerHTML = `
+        <div class="flex items-start gap-3">
+            <div class="mt-0.5 text-brand-green">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            </div>
+            <div>
+                <p class="text-gray-800 dark:text-gray-200 leading-snug">${n.mensagem}</p>
+                <p class="text-xs text-gray-400 mt-1">${formatDateString(n.criado_em.split('T')[0])}</p>
+            </div>
+        </div>
+      `;
+      
+      div.addEventListener('click', async () => {
+        if (!n.lida) {
+            await fetch(`/api/notificacoes/${n.id}/lida`, { method: 'PUT' });
+            loadNotifications();
+        }
+      });
+
+      notifList.appendChild(div);
+    });
+  }
+
+  if (btnClearNotifs) {
+    btnClearNotifs.addEventListener('click', async () => {
+        try {
+            const res = await fetch('/api/notificacoes', { method: 'DELETE' });
+            if (res.ok) loadNotifications();
+        } catch (err) {
+            console.error('Erro ao limpar notificações', err);
+        }
+    });
+  }
+
+  // ==========================================
+  // SETTINGS LOGIC
+  // ==========================================
+  const formUpdateProfile = document.getElementById('form-update-profile');
+  if (formUpdateProfile) {
+      formUpdateProfile.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const nome = document.getElementById('settings-nome').value;
+          const email = document.getElementById('settings-email').value;
+
+          try {
+              const res = await fetch('/api/usuarios/me', {
+                  method: 'PUT',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ nome, email })
+              });
+              const data = await res.json();
+              
+              if (res.ok) {
+                  showToast(data.mensagem, 'success');
+                  document.querySelectorAll('.user-name-display').forEach(el => el.textContent = nome);
+                  document.querySelectorAll('.user-email-display').forEach(el => el.textContent = email);
+              } else {
+                  showToast(data.erro, 'error');
+              }
+          } catch (err) {
+              showToast('Erro de conexão', 'error');
+          }
+      });
+  }
+
+  const btnDeleteAccount = document.getElementById('btn-delete-account');
+  if (btnDeleteAccount) {
+      btnDeleteAccount.addEventListener('click', async () => {
+          if (confirm('Tem certeza absoluta? Esta ação apagará TODOS os seus eventos e inscrições permanentemente.')) {
+              try {
+                  const res = await fetch('/api/usuarios/me', { method: 'DELETE' });
+                  if (res.ok) {
+                      alert('Sua conta foi excluída. Adeus!');
+                      window.location.href = '/login';
+                  } else {
+                      const data = await res.json();
+                      showToast(data.erro, 'error');
+                  }
+              } catch (err) {
+                  showToast('Erro de conexão', 'error');
+              }
+          }
+      });
+  }
+
 });
 
 // ==========================================================================

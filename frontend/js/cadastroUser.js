@@ -15,13 +15,15 @@ document.getElementById('formCadastro').addEventListener('submit', async (e) => 
         const dados = await resposta.json();
 
         if (resposta.ok) {
-            alert('Cadastro realizado com sucesso!');
-            window.location.href = '/login';
+            showToast('Cadastro realizado com sucesso!', 'success');
+            setTimeout(() => {
+                window.location.href = '/dashboard';
+            }, 1500);
         } else {
-            alert('Erro: ' + dados.erro);
+            showToast('Erro: ' + dados.erro, 'error');
         }
     } catch (erro) {
-        alert('Não foi possível conectar ao servidor.');
+        showToast('Não foi possível conectar ao servidor.', 'error');
     }
 });
 

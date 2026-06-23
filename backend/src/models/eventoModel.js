@@ -25,8 +25,12 @@ async function inscrever(usuarioId, eventoId) {
     await connection.beginTransaction();
     await connection.execute('INSERT INTO inscricoes (usuario_id, evento_id) VALUES (?, ?)', [usuarioId, eventoId]);
     await connection.execute('UPDATE eventos SET inscritos = inscritos + 1 WHERE id = ?', [eventoId]);
+    
+    // Buscar o dono do evento para notificação
+    const [eventos] = await connection.execute('SELECT usuario_id FROM eventos WHERE id = ?', [eventoId]);
+    
     await connection.commit();
-    return true;
+    return { sucesso: true, dono_evento_id: eventos[0]?.usuario_id };
   } catch (error) {
     await connection.rollback();
     if (error.code === 'ER_DUP_ENTRY') return true; // Já inscrito

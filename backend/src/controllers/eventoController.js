@@ -1,4 +1,5 @@
 const eventoModel = require('../models/eventoModel');
+const notificacaoModel = require('../models/notificacaoModel');
 
 async function listar(req, res) {
   try {
@@ -25,8 +26,19 @@ async function listarExplorar(req, res) {
 async function inscrever(req, res) {
   try {
     const usuarioId = req.usuarioLogado.id;
+    const nomeInscrito = req.usuarioLogado.nome; // Vem do JWT
     const { id } = req.params;
-    await eventoModel.inscrever(usuarioId, id);
+    
+    const resultado = await eventoModel.inscrever(usuarioId, id);
+    
+    // Dispara notificação se sucesso e não for o próprio dono
+    if (resultado.sucesso && resultado.dono_evento_id && resultado.dono_evento_id !== usuarioId) {
+      await notificacaoModel.criar(
+        resultado.dono_evento_id, 
+        `${nomeInscrito} acabou de se inscrever no seu evento!`
+      );
+    }
+
     return res.status(200).json({ mensagem: 'Inscrição realizada com sucesso!' });
   } catch (error) {
     console.error('Erro ao inscrever-se:', error);

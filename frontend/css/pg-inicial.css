@@ -1,0 +1,303 @@
+:root{
+    --verde:#8dd35f;
+    --verde-claro:#dcefcf;
+    --azul:#123f46;
+    --laranja:#c88b49;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Poppins',sans-serif;
+    background:#f5f5f5;
+}
+
+/* HEADER */
+
+.header{
+    width:90%;
+    margin:20px auto;
+    background:white;
+
+    border-radius:50px;
+
+    padding:20px 40px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    font-size:40px;
+    font-weight:700;
+}
+
+.logo span{
+    color:var(--verde);
+}
+
+nav{
+    display:flex;
+    gap:35px;
+}
+
+nav a{
+    text-decoration:none;
+    color:#555;
+    font-size:15px;
+}
+
+.btn-login{
+    background:var(--verde);
+    color:white;
+
+    border:none;
+
+    padding:15px 45px;
+
+    border-radius:30px;
+
+    cursor:pointer;
+}
+
+/* HERO */
+
+.hero{
+    width:96%;
+    height:700px;
+
+    margin:auto;
+
+    border-radius:12px;
+
+    background:
+    linear-gradient(rgba(0,0,0,.45),
+    rgba(0,0,0,.45)),
+    url("https://imgmd.net/images/v1/guia/1698592/norte-5-cat.jpg");
+
+    background-size:cover;
+    background-position:center;
+
+    display:flex;
+    align-items:center;
+}
+
+.hero-content{
+    margin-left:70px;
+}
+
+.hero h1{
+    font-family:'Oswald',sans-serif;
+    color:white;
+
+    font-size:85px;
+    line-height:90px;
+}
+
+.hero h1 span{
+    color:var(--verde);
+}
+
+.hero p{
+    font-family:'Oswald',sans-serif;
+
+    color:white;
+
+    font-size:26px;
+
+    width:700px;
+
+    margin-top:20px;
+    margin-bottom:30px;
+}
+
+.hero-buttons{
+    display:flex;
+    gap:20px;
+}
+
+.btn-verde{
+    background:var(--verde);
+
+    color:white;
+
+    border:none;
+
+    padding:15px 30px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+}
+
+.btn-branco{
+    background:white;
+
+    border:none;
+
+    padding:15px 30px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+}
+
+/* BENEFÍCIOS */
+
+.beneficios{
+    background:var(--verde-claro);
+
+    padding:90px 60px;
+}
+
+.beneficios h2{
+    text-align:center;
+
+    font-family:'Oswald',sans-serif;
+
+    font-size:70px;
+
+    color:var(--azul);
+
+    margin-bottom:70px;
+}
+
+.beneficios h2 span{
+    color:var(--verde);
+}
+
+.cards{
+    display:flex;
+    justify-content:center;
+    gap:40px;
+}
+
+.card{
+    background:white;
+
+    width:280px;
+
+    padding:50px 25px;
+
+    text-align:center;
+
+    border-radius:10px;
+}
+
+.card i{
+    font-size:60px;
+
+    color:var(--verde);
+
+    margin-bottom:25px;
+}
+
+.card h3{
+    margin-bottom:15px;
+}
+
+.card p{
+    color:#666;
+}
+
+/* COMO FUNCIONA */
+
+.funciona{
+    padding:90px 60px;
+
+    background:#f1f1eb;
+}
+
+.funciona h2{
+    text-align:center;
+
+    font-family:'Oswald',sans-serif;
+
+    font-size:70px;
+
+    color:var(--azul);
+
+    margin-bottom:80px;
+}
+
+.funciona span{
+    color:var(--verde);
+}
+
+.passos{
+    display:flex;
+    justify-content:center;
+    gap:70px;
+}
+
+.passo{
+    text-align:center;
+    width:250px;
+}
+
+.passo i{
+    font-size:60px;
+
+    color:var(--verde);
+
+    margin-bottom:25px;
+}
+
+.passo h3{
+    margin-bottom:10px;
+}
+
+/* FOOTER */
+
+footer{
+    display:flex;
+    min-height:300px;
+}
+
+.footer-logo{
+    width:25%;
+
+    background:var(--laranja);
+
+    color:white;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:45px;
+    font-weight:700;
+}
+
+.footer-logo span{
+    color:var(--verde);
+}
+
+.footer-content{
+    width:75%;
+
+    background:var(--azul);
+
+    color:white;
+
+    display:flex;
+    justify-content:space-around;
+
+    padding:60px;
+}
+
+.footer-content h4{
+    color:var(--verde);
+
+    margin-bottom:20px;
+}
+
+.footer-content p{
+    margin-bottom:10px;
+    color:#ddd;
+}

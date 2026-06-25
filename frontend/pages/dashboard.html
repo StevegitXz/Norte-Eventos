@@ -514,8 +514,31 @@
         </div>
     </div>
 
+    <!-- MODAL: DELETE ACCOUNT CONFIRMATION -->
+    <div class="fixed inset-0 z-[100] flex items-center justify-center bg-brand-darker/60 dark:bg-slate-950/80 backdrop-blur-sm modal-overlay" id="modal-delete-account-confirm" role="dialog" aria-modal="true" aria-labelledby="modal-delete-account-title">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden modal-container border border-transparent dark:border-slate-800">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800/50 modal-header">
+                <h3 id="modal-delete-account-title" class="font-display font-bold text-gray-800 dark:text-gray-100">Excluir Conta</h3>
+                <button class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors btn-modal-close" id="btn-close-delete-account-modal" aria-label="Fechar modal">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="p-6 text-center delete-confirm-body">
+                <div class="flex items-center justify-center w-16 h-16 min-w-[64px] mx-auto mb-4 bg-red-100 dark:bg-red-500/10 text-red-500 rounded-full delete-warn-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">Atenção!</h4>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Tem certeza absoluta? Esta ação apagará TODOS os seus eventos e inscrições permanentemente.</p>
+                <div class="flex items-center justify-center gap-3 delete-modal-actions">
+                    <button class="btn-secondary dark:bg-slate-800 dark:text-gray-200 dark:border-slate-700 dark:hover:bg-slate-700 flex-1 py-2" id="btn-cancel-delete-account">Voltar</button>
+                    <button class="bg-red-500 hover:bg-red-600 text-white font-medium text-sm py-2 px-4 rounded-lg flex-1 transition-colors shadow-sm btn-delete-confirm" id="btn-confirm-delete-account">Sim, Excluir Conta</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript Controller -->
     <script src="../js/toast.js"></script>
-    <script src="../js/dashboard.js"></script>
+    <script type="module" src="../js/dashboard.js"></script>
 </body>
 </html>

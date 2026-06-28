@@ -8,6 +8,7 @@ export const state = {
     currentFilterCategory: 'Tudo',
     exploreFilterCategory: 'Tudo',
     searchQuery: '',
+    exploreSearchQuery: '',
     currentSort: 'date-asc',
     eventToDeleteId: null,
     eventToEditId: null,

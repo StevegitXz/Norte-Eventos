@@ -43,6 +43,14 @@ async function migrate() {
       if (e.code !== 'ER_DUP_FIELDNAME') throw e;
     }
 
+    // Add foto_perfil column to usuarios if it doesn't exist
+    try {
+      await connection.query('ALTER TABLE usuarios ADD COLUMN foto_perfil VARCHAR(255)');
+      console.log('✅ Coluna "foto_perfil" adicionada à tabela usuarios.');
+    } catch (e) {
+      if (e.code !== 'ER_DUP_FIELDNAME') throw e;
+    }
+
     const queryInscricoes = `
       CREATE TABLE IF NOT EXISTS inscricoes (
           usuario_id INT NOT NULL,

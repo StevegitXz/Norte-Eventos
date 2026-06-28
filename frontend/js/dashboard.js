@@ -1,6 +1,6 @@
 import { initAuth, setupAuthBindings } from './modules/auth.js';
 import { setupUIBindings } from './modules/ui.js';
-import { loadEventsFromServer, setupEventsBindings } from './modules/events.js';
+import { loadEventsFromServer, setupEventsBindings, loadExploreEvents } from './modules/events.js';
 import { loadNotifications, setupNotificationsBindings } from './modules/notifications.js';
 
 // ==========================================================================
@@ -45,4 +45,6 @@ window.addEventListener('unhandledrejection', function(event) {
     // 4. Carregar Dados Iniciais
     loadNotifications();
     loadEventsFromServer();
+    // A tab padrão agora é "Início" (explore-events), então carregar logo
+    loadExploreEvents();
 })();

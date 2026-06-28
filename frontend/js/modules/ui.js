@@ -1,7 +1,7 @@
 import { state } from './state.js';
 import { formatDateString, escapeHTML } from './utils.js';
 import { handleSubscription, deleteEvent, removeParticipant, addParticipant } from './api.js';
-import { fetchAndRenderParticipants, loadEventsFromServer, loadExploreEvents, renderEvents, enableEditMode } from './events.js';
+import { fetchAndRenderParticipants, loadEventsFromServer, loadExploreEvents, renderEvents, renderExploreEvents, enableEditMode } from './events.js';
 
 // ==========================================
 // UI FUNCTIONS
@@ -28,14 +28,17 @@ export function switchTab(tabId) {
 
     const pageTitleEl = document.querySelector('.page-title');
     if (pageTitleEl) {
-        if (tabId === 'overview') pageTitleEl.textContent = 'Início';
+        if (tabId === 'explore-events') pageTitleEl.textContent = 'Início';
+        else if (tabId === 'overview') pageTitleEl.textContent = 'Dashboard';
         else if (tabId === 'my-events') pageTitleEl.textContent = 'Meus Eventos';
-        else if (tabId === 'explore-events') pageTitleEl.textContent = 'Explorar Eventos';
         else if (tabId === 'create-event') {
             pageTitleEl.textContent = state.eventToEditId ? 'Editar Evento' : 'Novo Evento';
         }
         else if (tabId === 'manage-event') {
             pageTitleEl.textContent = 'Gerenciar Evento';
+        }
+        else if (tabId === 'settings') {
+            pageTitleEl.textContent = 'Configurações';
         }
     }
 
@@ -128,6 +131,15 @@ export function setupUIBindings() {
         });
     });
 
+    // Botão de perfil no sidebar-header (fora do sidebar-menu)
+    const btnProfileSettings = document.querySelector('.sidebar-header .menu-item[data-target="#settings"]');
+    if (btnProfileSettings) {
+        btnProfileSettings.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchTab('settings');
+        });
+    }
+
     const linkToMyEvents = document.querySelector('.btn-link-my-events');
     if (linkToMyEvents) {
         linkToMyEvents.addEventListener('click', (e) => {
@@ -153,8 +165,8 @@ export function setupUIBindings() {
         });
     });
 
-    // Filters and Search
-    const categoryFilters = document.querySelectorAll('.filters-group .filter-btn');
+    // Filters and Search (Dashboard/Meus Eventos)
+    const categoryFilters = document.querySelectorAll('.filters-group:not(.explore-filters-group) .filter-btn');
     categoryFilters.forEach(btn => {
         btn.addEventListener('click', () => {
             categoryFilters.forEach(b => b.classList.remove('active'));
@@ -180,6 +192,37 @@ export function setupUIBindings() {
         });
     }
 
+    // Explore page: search bar + filter toggle + category filters
+    const exploreSearchInput = document.getElementById('explore-search-input');
+    if (exploreSearchInput) {
+        exploreSearchInput.addEventListener('input', (e) => {
+            state.exploreSearchQuery = e.target.value;
+            renderExploreEvents();
+        });
+    }
+
+    const btnToggleFilters = document.getElementById('btn-toggle-explore-filters');
+    const filtersContainer = document.getElementById('explore-filters-container');
+    if (btnToggleFilters && filtersContainer) {
+        btnToggleFilters.addEventListener('click', () => {
+            filtersContainer.classList.toggle('hidden');
+        });
+    }
+
+    const exploreFilterBtns = document.querySelectorAll('.explore-filters-group .filter-btn');
+    exploreFilterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            exploreFilterBtns.forEach(b => {
+                b.classList.remove('active', 'bg-brand-green', 'text-white');
+                b.classList.add('bg-gray-100', 'dark:bg-slate-800', 'text-gray-600', 'dark:text-gray-300');
+            });
+            btn.classList.add('active', 'bg-brand-green', 'text-white');
+            btn.classList.remove('bg-gray-100', 'dark:bg-slate-800', 'text-gray-600', 'dark:text-gray-300');
+            state.exploreFilterCategory = btn.dataset.category;
+            renderExploreEvents();
+        });
+    });
+
     // Modals bindings
     const btnCloseDeleteModal = document.getElementById('btn-close-delete-modal');
     const btnCancelDelete = document.getElementById('btn-cancel-delete');
@@ -187,19 +230,43 @@ export function setupUIBindings() {
 
     if (btnCloseDeleteModal) btnCloseDeleteModal.addEventListener('click', closeDeleteConfirmModal);
     if (btnCancelDelete) btnCancelDelete.addEventListener('click', closeDeleteConfirmModal);
-
     if (btnConfirmDelete) {
         btnConfirmDelete.addEventListener('click', async () => {
-            if (state.eventToDeleteId) {
-                try {
-                    const res = await deleteEvent(state.eventToDeleteId);
-                    showToast('Evento excluído com sucesso!', 'success');
-                    await loadEventsFromServer();
-                    closeDeleteConfirmModal();
-                } catch (error) {
-                    showToast(error.message, 'error');
-                }
+            if (!state.eventToDeleteId) return;
+            try {
+                await deleteEvent(state.eventToDeleteId);
+                closeDeleteConfirmModal();
+                loadEventsFromServer();
+            } catch (err) {
+                console.error('Erro ao excluir evento', err);
             }
+        });
+    }
+    
+    const btnCloseDeleteAccountModal = document.getElementById('btn-close-delete-account-modal');
+    const btnCancelDeleteAccount = document.getElementById('btn-cancel-delete-account');
+    const btnConfirmDeleteAccount = document.getElementById('btn-confirm-delete-account');
+
+    if (btnCloseDeleteAccountModal) btnCloseDeleteAccountModal.addEventListener('click', closeDeleteAccountConfirmModal);
+    if (btnCancelDeleteAccount) btnCancelDeleteAccount.addEventListener('click', closeDeleteAccountConfirmModal);
+    if (btnConfirmDeleteAccount) {
+        btnConfirmDeleteAccount.addEventListener('click', async () => {
+            try {
+                await deleteAccount();
+                closeDeleteAccountConfirmModal();
+                window.location.href = '/login';
+            } catch (err) {
+                console.error('Erro ao excluir conta', err);
+            }
+        });
+    }
+
+    // Sidebar Collapse
+    const btnToggleSidebar = document.getElementById('btn-toggle-sidebar');
+    const mainSidebar = document.getElementById('main-sidebar');
+    if (btnToggleSidebar && mainSidebar) {
+        btnToggleSidebar.addEventListener('click', () => {
+            mainSidebar.classList.toggle('collapsed');
         });
     }
 

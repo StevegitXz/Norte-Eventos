@@ -34,19 +34,59 @@ export async function loadExploreEvents() {
             hora: ev.hora ? ev.hora.substring(0, 5) : '00:00'
         }));
         renderExploreEvents();
+        updateExploreSidebarStats();
     } catch (error) {
         console.error(error);
     }
 }
 
+function updateExploreSidebarStats() {
+    const statEvents = document.getElementById('explore-stat-events');
+    const statInscricoes = document.getElementById('explore-stat-inscricoes');
+    const statNextEvent = document.getElementById('explore-stat-next-event');
+
+    if (statEvents) {
+        statEvents.textContent = String(state.exploreEvents.length).padStart(2, '0');
+    }
+    if (statInscricoes) {
+        const inscrito = state.exploreEvents.filter(ev => ev.inscrito).length;
+        statInscricoes.textContent = String(inscrito).padStart(2, '0');
+    }
+    if (statNextEvent) {
+        const now = new Date();
+        const upcoming = state.exploreEvents
+            .filter(ev => new Date(`${ev.data}T${ev.hora || '00:00'}`) >= now)
+            .sort((a, b) => new Date(`${a.data}T${a.hora || '00:00'}`) - new Date(`${b.data}T${b.hora || '00:00'}`));
+        if (upcoming.length > 0) {
+            const d = new Date(upcoming[0].data + 'T00:00:00');
+            const meses = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+            statNextEvent.textContent = `${String(d.getDate()).padStart(2, '0')} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
+        } else {
+            statNextEvent.textContent = 'Sem eventos futuros';
+        }
+    }
+}
+
+function getFilteredExploreEvents() {
+    return state.exploreEvents.filter(ev => {
+        const matchesCategory = state.exploreFilterCategory === 'Tudo' || ev.categoria === state.exploreFilterCategory;
+        const searchLower = (state.exploreSearchQuery || '').toLowerCase();
+        const matchesSearch = (state.exploreSearchQuery || '') === '' || 
+            (ev.nome && ev.nome.toLowerCase().includes(searchLower)) || 
+            (ev.descricao && ev.descricao.toLowerCase().includes(searchLower)) || 
+            (ev.local && ev.local.toLowerCase().includes(searchLower));
+        return matchesCategory && matchesSearch;
+    });
+}
+
 function getFilteredEvents(list, category) {
     return list.filter(ev => {
         const matchesCategory = category === 'Tudo' || ev.categoria === category;
-        const searchLower = state.searchQuery.toLowerCase();
-        const matchesSearch = state.searchQuery === '' || 
-            ev.nome.toLowerCase().includes(searchLower) || 
+        const searchLower = (state.searchQuery || '').toLowerCase();
+        const matchesSearch = (state.searchQuery || '') === '' || 
+            (ev.nome && ev.nome.toLowerCase().includes(searchLower)) || 
             (ev.descricao && ev.descricao.toLowerCase().includes(searchLower)) || 
-            ev.local.toLowerCase().includes(searchLower);
+            (ev.local && ev.local.toLowerCase().includes(searchLower));
 
         return matchesCategory && matchesSearch;
     }).sort((a, b) => {
@@ -94,11 +134,11 @@ export function renderEvents() {
 
 export function renderExploreEvents() {
     const listExplore = document.getElementById('explore-events-list');
-    const filtered = getFilteredEvents(state.exploreEvents, state.exploreFilterCategory);
+    const filtered = getFilteredExploreEvents();
     if (listExplore) {
         listExplore.innerHTML = '';
         if (filtered.length === 0) {
-            listExplore.innerHTML = renderEmptyStateMarkup('Nenhum evento global disponível', 'Aguarde até que outros usuários publiquem eventos.');
+            listExplore.innerHTML = renderEmptyStateMarkup('Nenhum evento disponível', 'Aguarde até que outros usuários publiquem eventos na plataforma.');
         } else {
             filtered.forEach(ev => {
                 listExplore.appendChild(createEventCardElement(ev, true));
@@ -109,62 +149,104 @@ export function renderExploreEvents() {
 
 function createEventCardElement(ev, isExploreView) {
     const card = document.createElement('div');
-    card.className = 'bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm border border-gray-100 dark:border-slate-800 transition-all hover:shadow-md flex flex-col event-card';
-    card.dataset.id = ev.id;
-
-    const bannerHTML = ev.imagem_url 
-      ? `<div class="h-32 bg-cover bg-center flex items-start justify-end p-4" style="background-image: url('${ev.imagem_url}');">
-           <span class="inline-block px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full text-xs font-bold text-white shadow-sm">${ev.categoria}</span>
-         </div>`
-      : `<div class="h-24 p-4 flex items-start justify-end ${ev.bannerClass || 'event-card-gradient-1'}">
-           <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-bold text-white shadow-sm">${ev.categoria}</span>
-         </div>`;
-
-    let actionsHTML = '';
+    
     if (isExploreView) {
+        // Glassmorphism Card Style
+        const bgStyle = ev.imagem_url ? `background-image: url('${ev.imagem_url}');` : 'background-color: #00a35c;';
+        const bgClass = ev.imagem_url ? 'bg-cover bg-center' : '';
+        
+        card.className = `relative rounded-3xl overflow-hidden shadow-md transition-all hover:shadow-xl flex flex-col event-card ${bgClass}`;
+        if (bgStyle) card.setAttribute('style', bgStyle);
+        card.style.minHeight = '320px';
+
+        let actionsHTML = '';
         if (ev.inscrito) {
-            actionsHTML = `<button class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium text-brand-green bg-green-50 btn-unsubscribe" data-id="${ev.id}">Inscrito (Cancelar)</button>`;
+            actionsHTML = `<button class="w-full mt-3 flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-sm font-semibold text-white bg-red-500/80 hover:bg-red-600/90 backdrop-blur-md btn-unsubscribe transition-colors" data-id="${ev.id}">Cancelar Inscrição</button>`;
         } else {
-            actionsHTML = `<button class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium text-white bg-brand-green hover:bg-brand-dark btn-subscribe" data-id="${ev.id}">Inscrever-se</button>`;
+            actionsHTML = `<button class="w-full mt-3 flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-sm font-semibold text-white bg-brand-green/90 hover:bg-brand-green backdrop-blur-md btn-subscribe transition-colors" data-id="${ev.id}">Inscrever-se</button>`;
         }
-    } else {
-        actionsHTML = `
-        <div class="flex flex-col w-full gap-2">
-          <button class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium text-blue-600 bg-blue-50 btn-manage" data-id="${ev.id}">Gerenciar Inscrições</button>
-          <div class="flex items-center gap-2 w-full">
-            <button class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium text-brand-dark bg-gray-100 btn-edit" data-id="${ev.id}">Editar</button>
-            <button class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium text-red-600 bg-red-50 btn-delete" data-id="${ev.id}">Excluir</button>
+
+        card.innerHTML = `
+          <!-- Overlay degrade para garantir leitura do glass no fundo -->
+          <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);"></div>
+          
+          <div class="relative z-10 flex flex-col h-full justify-end p-4">
+              <!-- Tag Categoria -->
+              <div class="absolute top-4 right-4">
+                  <span class="inline-block px-3 py-1 bg-black/40 backdrop-blur-md rounded-full text-xs font-bold text-white shadow-sm">${escapeHTML(ev.categoria || 'Geral')}</span>
+              </div>
+
+              <!-- Glass Morphism Card Info -->
+              <div class="rounded-2xl p-5 w-full text-white shadow-xl" style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);">
+                  <div class="flex items-center gap-2 text-xs font-semibold text-white/90 mb-1">
+                      <span>${formatDateString(ev.data)} às ${ev.hora || '00:00'}</span>
+                  </div>
+                  <h4 class="text-xl font-bold mb-1 line-clamp-1 drop-shadow-md">${escapeHTML(ev.nome)}</h4>
+                  <p class="text-sm text-white/80 mb-3 line-clamp-2">${escapeHTML(ev.descricao || 'Sem descrição')}</p>
+                  
+                  <div class="flex items-center gap-2 text-xs text-white/90 mb-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                      <span>${escapeHTML(ev.local)}</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-xs text-white/90">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                      <span>${ev.inscritos} / ${ev.capacidade} Inscritos</span>
+                  </div>
+
+                  ${actionsHTML}
+              </div>
           </div>
-        </div>
-      `;
-    }
+        `;
 
-    card.innerHTML = `
-      ${bannerHTML}
-      <div class="p-5 flex-1 flex flex-col">
-        <div class="flex items-center gap-2 text-sm font-semibold text-brand-green mb-2">
-          <span>${formatDateString(ev.data)} às ${ev.hora || '00:00'}</span>
-        </div>
-        <h4 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-2">${escapeHTML(ev.nome)}</h4>
-        <p class="text-sm text-gray-500 mb-4 line-clamp-2">${escapeHTML(ev.descricao || 'Sem descrição')}</p>
-        <div class="space-y-2 mb-5">
-          <div class="flex items-center gap-2 text-sm text-gray-600"><span>${escapeHTML(ev.local)}</span></div>
-          <div class="flex items-center gap-2 text-sm text-gray-600"><span>${ev.inscritos} / ${ev.capacidade} Inscritos</span></div>
-        </div>
-        <div class="flex flex-col gap-3 pt-4 border-t border-gray-100">
-          ${actionsHTML}
-        </div>
-      </div>
-    `;
-
-    if (isExploreView) {
         if (ev.inscrito) card.querySelector('.btn-unsubscribe').addEventListener('click', () => callSubscription(ev.id, 'DELETE'));
         else card.querySelector('.btn-subscribe').addEventListener('click', () => callSubscription(ev.id, 'POST'));
+
     } else {
+        // Normal style for Dashboard/My Events
+        card.className = 'bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm border border-gray-100 dark:border-slate-800 transition-all hover:shadow-md flex flex-col event-card';
+        card.dataset.id = ev.id;
+
+        const bannerHTML = ev.imagem_url 
+          ? `<div class="h-32 bg-cover bg-center flex items-start justify-end p-4" style="background-image: url('${ev.imagem_url}');">
+               <span class="inline-block px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full text-xs font-bold text-white shadow-sm">${ev.categoria}</span>
+             </div>`
+          : `<div class="h-24 p-4 flex items-start justify-end ${ev.bannerClass || 'event-card-gradient-1'}">
+               <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-bold text-white shadow-sm">${ev.categoria}</span>
+             </div>`;
+
+        let actionsHTML = `
+            <div class="flex flex-col w-full gap-2">
+              <button class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium text-blue-600 bg-blue-50 btn-manage" data-id="${ev.id}">Gerenciar Inscrições</button>
+              <div class="flex items-center gap-2 w-full">
+                <button class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium text-brand-dark bg-gray-100 btn-edit" data-id="${ev.id}">Editar</button>
+                <button class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium text-red-600 bg-red-50 btn-delete" data-id="${ev.id}">Excluir</button>
+              </div>
+            </div>
+          `;
+
+        card.innerHTML = `
+          ${bannerHTML}
+          <div class="p-5 flex-1 flex flex-col">
+            <div class="flex items-center gap-2 text-sm font-semibold text-brand-green mb-2">
+              <span>${formatDateString(ev.data)} às ${ev.hora || '00:00'}</span>
+            </div>
+            <h4 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-2">${escapeHTML(ev.nome)}</h4>
+            <p class="text-sm text-gray-500 mb-4 line-clamp-2">${escapeHTML(ev.descricao || 'Sem descrição')}</p>
+            <div class="space-y-2 mb-5">
+              <div class="flex items-center gap-2 text-sm text-gray-600"><span>${escapeHTML(ev.local)}</span></div>
+              <div class="flex items-center gap-2 text-sm text-gray-600"><span>${ev.inscritos} / ${ev.capacidade} Inscritos</span></div>
+            </div>
+            <div class="flex flex-col gap-3 pt-4 border-t border-gray-100">
+              ${actionsHTML}
+            </div>
+          </div>
+        `;
+
         card.querySelector('.btn-edit').addEventListener('click', () => enableEditMode(ev.id));
         card.querySelector('.btn-delete').addEventListener('click', () => openDeleteConfirmModal(ev.id));
         card.querySelector('.btn-manage').addEventListener('click', () => openEventDetails(ev.id));
     }
+    
     return card;
 }
 

@@ -28,6 +28,18 @@
         .event-card-gradient-3 { background-image: linear-gradient(to right, #d97706, #ea580c); color: white; }
         .event-card-gradient-4 { background-image: linear-gradient(to right, #db2777, #ec4899); color: white; }
         .event-card-gradient-5 { background-image: linear-gradient(to right, #7c3aed, #8b5cf6); color: white; }
+
+        /* Sidebar Collapse Styles */
+        .sidebar { transition: width 0.3s ease; }
+        .sidebar.collapsed { width: 5rem; } /* w-20 */
+        .sidebar.collapsed .logo-text { display: none; }
+        .sidebar.collapsed .user-details { display: none; }
+        .sidebar.collapsed .sidebar-menu span { display: none; }
+        .sidebar.collapsed .sidebar-header { padding: 1.5rem 0.5rem; align-items: center; }
+        .sidebar.collapsed #btn-toggle-sidebar svg { transform: rotate(180deg); }
+        .sidebar.collapsed .btn-logout span { display: none; }
+        .sidebar.collapsed .btn-logout { padding-left: 0; padding-right: 0; justify-content: center; }
+        .sidebar.collapsed .menu-item { justify-content: center; padding-left: 0.5rem; padding-right: 0.5rem; }
     </style>
 </head>
 <body class="bg-brand-light dark:bg-slate-950 font-sans text-brand-dark dark:text-gray-100 antialiased transition-colors duration-300">
@@ -35,28 +47,44 @@
     <div class="flex h-screen overflow-hidden dashboard-container">
         
         <!-- SIDEBAR -->
-        <aside class="sidebar hidden md:flex flex-col w-64 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 shadow-sm z-20 justify-between transition-colors duration-300">
+        <aside id="main-sidebar" class="sidebar hidden md:flex flex-col w-64 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 shadow-sm z-20 justify-between transition-colors duration-300">
             <div>
-                <!-- Sidebar Header / Logo -->
-                <div class="flex items-center gap-3 p-6 border-b border-gray-100 dark:border-slate-800 sidebar-header">
-                    <div class="flex items-center justify-center w-10 h-10 min-w-[40px] bg-brand-green rounded-xl text-white logo-icon shadow-md shadow-brand-green/30">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+                <!-- Sidebar Header / Logo & Perfil -->
+                <div class="flex flex-col gap-4 p-6 border-b border-gray-100 dark:border-slate-800 sidebar-header relative">
+                    <!-- Collapse Toggle Button -->
+                    <button id="btn-toggle-sidebar" class="absolute top-4 -right-3.5 flex items-center justify-center w-7 h-7 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-full text-gray-500 hover:text-brand-green shadow-sm z-30 transition-transform duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                    </button>
+                    <!-- Logo -->
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center justify-center w-10 h-10 min-w-[40px] bg-brand-green rounded-xl text-white logo-icon shadow-md shadow-brand-green/30">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+                        </div>
+                        <h1 class="text-xl font-display font-black tracking-tight text-brand-darker dark:text-white logo-text">Norte<span class="text-brand-green">Eventos</span></h1>
                     </div>
-                    <h1 class="text-xl font-display font-black tracking-tight text-brand-darker dark:text-white logo-text">Norte<span class="text-brand-green">Eventos</span></h1>
+                    
+                    <!-- Foto de perfil no topo esquerdo (Abre tela de Usuário) -->
+                    <button class="flex items-center gap-3 hover:opacity-80 transition-opacity mt-2 text-left menu-item" data-target="#settings" title="Acessar Configurações">
+                        <img id="sidebar-user-avatar" src="" alt="Avatar" class="w-10 h-10 rounded-full object-cover hidden border border-gray-200">
+                        <div class="flex items-center justify-center w-10 h-10 min-w-[40px] bg-brand-dark dark:bg-slate-700 rounded-full text-white font-bold text-sm avatar shadow-sm">U</div>
+                        <div class="overflow-hidden user-details">
+                            <div class="font-semibold text-sm text-brand-darker dark:text-gray-200 truncate user-name user-name-display">Usuário</div>
+                        </div>
+                    </button>
                 </div>
 
                 <!-- Sidebar Navigation Menu -->
                 <ul class="py-6 px-4 space-y-2 sidebar-menu">
-                    <li class="menu-item active" data-target="#overview">
-                        <a href="#overview" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 font-medium hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-brand-green transition-colors [.active_&]:bg-brand-green/10 dark:[.active_&]:bg-brand-green/20 [.active_&]:text-brand-green">
+                    <li class="menu-item active" data-target="#explore-events">
+                        <a href="#explore-events" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 font-medium hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-brand-green transition-colors [.active_&]:bg-brand-green/10 dark:[.active_&]:bg-brand-green/20 [.active_&]:text-brand-green">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
                             <span>Início</span>
                         </a>
                     </li>
-                    <li class="menu-item" data-target="#explore-events">
-                        <a href="#explore-events" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 font-medium hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-brand-green transition-colors [.active_&]:bg-brand-green/10 dark:[.active_&]:bg-brand-green/20 [.active_&]:text-brand-green">
+                    <li class="menu-item" data-target="#overview">
+                        <a href="#overview" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 font-medium hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-brand-green transition-colors [.active_&]:bg-brand-green/10 dark:[.active_&]:bg-brand-green/20 [.active_&]:text-brand-green">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
-                            <span>Explorar Eventos</span>
+                            <span>Dashboard</span>
                         </a>
                     </li>
                     <li class="menu-item" data-target="#my-events">
@@ -71,24 +99,14 @@
                             <span>Organizar Evento</span>
                         </a>
                     </li>
-                    <li class="menu-item" data-target="#settings">
-                        <a href="#settings" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 font-medium hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-brand-green transition-colors [.active_&]:bg-brand-green/10 dark:[.active_&]:bg-brand-green/20 [.active_&]:text-brand-green">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                            <span>Configurações</span>
-                        </a>
+                    <li class="menu-item hidden" data-target="#settings">
+                        <!-- Hidden tab for settings -->
                     </li>
                 </ul>
             </div>
 
-            <!-- Sidebar Footer User Profile -->
+            <!-- Sidebar Footer User Profile (Only logout now) -->
             <div class="p-4 border-t border-gray-100 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-900/50 sidebar-footer">
-                <div class="flex items-center gap-3 mb-4 user-profile">
-                    <div class="flex items-center justify-center w-10 h-10 min-w-[40px] bg-brand-dark dark:bg-slate-700 rounded-full text-white font-bold text-sm avatar shadow-sm">U</div>
-                    <div class="overflow-hidden user-details">
-                        <div class="font-semibold text-sm text-brand-darker dark:text-gray-200 truncate user-name user-name-display">Organizador</div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400 truncate user-role user-email-display">carregando...</div>
-                    </div>
-                </div>
                 <button class="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-lg text-sm font-medium text-red-600 bg-red-50 dark:bg-red-500/10 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors btn-logout" id="btn-logout" aria-label="Sair da Conta">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                     <span>Sair</span>
@@ -152,7 +170,7 @@
             <div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-brand-light dark:bg-slate-950 content-area transition-colors duration-300">
                 
                 <!-- VIEW 1: OVERVIEW -->
-                <section class="tab-content active max-w-7xl mx-auto" id="overview">
+                <section class="tab-content max-w-7xl mx-auto" id="overview">
                     <!-- Welcome Card -->
                     <div class="bg-gradient-to-r from-brand-dark to-brand-darker dark:from-slate-800 dark:to-slate-900 rounded-2xl p-6 md:p-8 text-white mb-8 shadow-xl relative overflow-hidden welcome-banner border border-transparent dark:border-slate-700/50">
                         <div class="absolute -right-20 -top-20 w-64 h-64 bg-brand-green/20 blur-3xl rounded-full"></div>
@@ -215,24 +233,86 @@
                     </div>
                 </section>
 
-                <!-- VIEW 2: EXPLORAR EVENTOS -->
-                <section class="tab-content max-w-7xl mx-auto" id="explore-events">
-                    <!-- Filters & Sort Header -->
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 filters-row">
-                        <div class="flex overflow-x-auto hide-scrollbar gap-2 pb-2 md:pb-0 filters-group explore-filters-group">
-                            <button class="filter-btn active px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 [.active&]:bg-brand-dark dark:[.active&]:bg-brand-green [.active&]:text-white transition-colors" data-category="Tudo">Todos</button>
-                            <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 [.active&]:bg-brand-dark dark:[.active&]:bg-brand-green [.active&]:text-white transition-colors" data-category="Cultura">Cultura</button>
-                            <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 [.active&]:bg-brand-dark dark:[.active&]:bg-brand-green [.active&]:text-white transition-colors" data-category="Gastronomia">Gastronomia</button>
-                            <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 [.active&]:bg-brand-dark dark:[.active&]:bg-brand-green [.active&]:text-white transition-colors" data-category="Tecnologia">Tecnologia</button>
-                            <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 [.active&]:bg-brand-dark dark:[.active&]:bg-brand-green [.active&]:text-white transition-colors" data-category="Negócios">Negócios</button>
-                            <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 [.active&]:bg-brand-dark dark:[.active&]:bg-brand-green [.active&]:text-white transition-colors" data-category="Esportes">Esportes</button>
-                            <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 [.active&]:bg-brand-dark dark:[.active&]:bg-brand-green [.active&]:text-white transition-colors" data-category="Outros">Outros</button>
+                <!-- VIEW 2: INÍCIO / EXPLORAR EVENTOS -->
+                <section class="tab-content active mx-auto" id="explore-events">
+                    
+                    <!-- Welcome Header -->
+                    <div class="mb-6">
+                        <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Olá, <span class="user-name-display text-brand-green">Usuário</span></h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Fique por dentro de todos os eventos da sua região</p>
+                    </div>
+
+                    <!-- Search Bar + Filter Toggle -->
+                    <div class="flex items-center gap-3 mb-8">
+                        <div class="flex-1 flex items-center gap-3 bg-brand-green rounded-full px-5 py-3 shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <input type="text" id="explore-search-input" placeholder="Busque por eventos" class="flex-1 bg-transparent text-white placeholder-white/70 font-medium text-sm focus:outline-none">
+                        </div>
+                        <button id="btn-toggle-explore-filters" class="flex items-center justify-center w-11 h-11 rounded-xl border-2 border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-gray-500 dark:text-gray-400 hover:border-brand-green hover:text-brand-green transition-all" title="Filtros de categoria">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+                        </button>
+                    </div>
+
+                    <!-- Category Filters (collapsible) -->
+                    <div class="hidden mb-6 explore-filters-row" id="explore-filters-container">
+                        <div class="flex overflow-x-auto hide-scrollbar gap-2 pb-2 explore-filters-group">
+                            <button class="filter-btn active px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap bg-brand-green text-white transition-colors" data-category="Tudo">Todos</button>
+                            <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors" data-category="Cultura">Cultura</button>
+                            <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors" data-category="Gastronomia">Gastronomia</button>
+                            <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors" data-category="Tecnologia">Tecnologia</button>
+                            <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors" data-category="Negócios">Negócios</button>
+                            <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors" data-category="Esportes">Esportes</button>
+                            <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors" data-category="Outros">Outros</button>
                         </div>
                     </div>
 
-                    <!-- Explore Events List Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 events-grid" id="explore-events-list">
-                        <!-- Filled dynamically by JS -->
+                    <!-- Main 2-column layout: Cards + Right Sidebar -->
+                    <div class="flex flex-col lg:flex-row gap-6">
+                        
+                        <!-- Left: Event Cards Grid (2 cols) -->
+                        <div class="flex-1 min-w-0">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 events-grid" id="explore-events-list">
+                                <!-- Filled dynamically by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Right Sidebar: Notifications + Stats -->
+                        <div class="w-full lg:w-72 xl:w-80 flex-shrink-0 space-y-5">
+                            
+                            <!-- Notificações Card -->
+                            <div class="bg-brand-green rounded-2xl p-5 shadow-sm text-white">
+                                <h4 class="font-bold text-lg mb-3 flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                                    Notificações
+                                </h4>
+                                <div id="explore-notifications-list" class="space-y-2 max-h-40 overflow-y-auto custom-scrollbar">
+                                    <p class="text-sm text-white/80">Nenhuma notificação recente.</p>
+                                </div>
+                            </div>
+
+                            <!-- Estatísticas Card -->
+                            <div class="bg-brand-green rounded-2xl p-5 shadow-sm text-white">
+                                <div class="space-y-4">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-3xl font-black" id="explore-stat-events">00</span>
+                                        <span class="text-sm font-medium text-white/90">Eventos disponíveis</span>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-3xl font-black" id="explore-stat-inscricoes">00</span>
+                                        <span class="text-sm font-medium text-white/90">Inscrições realizadas</span>
+                                    </div>
+
+                                    <div class="pt-3 mt-3 border-t border-white/20">
+                                        <p class="text-xs text-white/70 mb-1">Próximo evento em:</p>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-sm font-bold" id="explore-stat-next-event">00 de mês de 2026</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </section>
 
@@ -429,55 +509,114 @@
                         </div>
                     </div>
                 </section>
-            </div>
-            <!-- SETTINGS TAB (NEW) -->
-            <div id="settings" class="tab-content hidden h-full overflow-y-auto animate-fade-in">
-                <div class="p-6 md:p-10 max-w-2xl mx-auto space-y-8">
-                    <div>
-                        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Configurações da Conta</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Atualize suas informações pessoais ou exclua sua conta permanentemente.</p>
+
+                <!-- SETTINGS TAB (NEW) -->
+                <section class="tab-content max-w-7xl mx-auto" id="settings">
+                  <div class="p-2 md:p-4">
+                <div class="max-w-6xl mx-auto space-y-6">
+                    <div class="flex items-center gap-4 mb-8">
+                        <h3 class="text-3xl font-bold text-gray-800 dark:text-white">Perfil e configurações</h3>
                     </div>
 
-                    <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 dark:border-slate-800 transition-all hover:shadow-md">
-                        <form id="form-update-profile" class="space-y-5">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome Completo</label>
-                                <input type="text" id="settings-nome" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-green/50 transition-all">
+                    <div class="bg-[#8cc474] rounded-2xl p-6 md:p-8 shadow-sm">
+                        <form id="form-update-profile" onsubmit="return false;" class="flex flex-col md:flex-row md:divide-x divide-green-800/20 gap-8 md:gap-0">
+                            
+                            <!-- Coluna 1: Nome e Email -->
+                            <div class="flex-1 md:pr-8 flex flex-col justify-between">
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-xl font-medium text-white mb-2">Nome</label>
+                                        <input type="text" id="settings-nome" readonly required class="w-full px-4 py-2.5 rounded-full bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all shadow-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xl font-medium text-white mb-2">Email</label>
+                                        <input type="email" id="settings-email" readonly required class="w-full px-4 py-2.5 rounded-full bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all shadow-sm">
+                                    </div>
+                                    <div class="flex items-center gap-2 mt-4">
+                                        <input type="checkbox" id="settings-enable-edit" class="w-5 h-5 rounded border-gray-300 text-[#d49454] focus:ring-[#c28448] bg-white cursor-pointer">
+                                        <label for="settings-enable-edit" class="text-gray-900 font-medium cursor-pointer">Habilitar edição</label>
+                                    </div>
+                                </div>
+                                <div class="mt-8">
+                                    <button type="button" id="btn-save-profile-info" disabled class="px-6 py-2 bg-[#d49454] hover:bg-[#c28448] disabled:opacity-50 disabled:cursor-not-allowed text-gray-900 rounded-full font-medium transition-all shadow-sm">
+                                        Salvar alterações
+                                    </button>
+                                </div>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">E-mail</label>
-                                <input type="email" id="settings-email" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-green/50 transition-all">
+
+                            <!-- Coluna 2: Foto de Perfil -->
+                            <div class="flex-1 md:px-8 flex flex-col items-center justify-between">
+                                <div class="flex flex-col items-center space-y-3">
+                                    <div class="relative group cursor-pointer" id="profile-pic-container">
+                                        <img id="settings-profile-preview" src="" alt="Avatar" class="w-32 h-32 rounded-full object-cover bg-gray-200 border-4 border-transparent group-hover:border-white/50 transition-all hidden">
+                                        <div id="settings-profile-placeholder" class="w-32 h-32 rounded-full bg-gray-300 flex items-center justify-center text-4xl text-gray-500 font-bold border-4 border-transparent group-hover:border-white/50 transition-all">
+                                            U
+                                        </div>
+                                        <div class="absolute inset-0 bg-black/30 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                        </div>
+                                        <input type="file" id="settings-foto" accept="image/*" class="hidden">
+                                    </div>
+                                    <span class="text-gray-900 font-medium text-lg">Perfil</span>
+                                </div>
+                                <div class="mt-8">
+                                    <button type="button" id="btn-save-profile-pic" class="px-8 py-2 bg-[#d49454] hover:bg-[#c28448] text-gray-900 rounded-full font-medium transition-all shadow-sm">
+                                        Salvar
+                                    </button>
+                                </div>
                             </div>
-                            <button type="submit" class="w-full md:w-auto px-6 py-2.5 bg-brand-green hover:bg-brand-green/90 text-white rounded-xl font-medium transition-all transform hover:-translate-y-0.5 active:scale-95 shadow-sm">
-                                Salvar Alterações
-                            </button>
+
+                            <!-- Coluna 3: Alterar Senha -->
+                            <div class="flex-1 md:pl-8 flex flex-col justify-between">
+                                <div class="space-y-4">
+                                    <h4 class="text-2xl font-medium text-gray-900 mb-6">Alterar senha</h4>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-900 mb-1">Senha atual</label>
+                                        <input type="password" id="settings-senha-atual" class="w-full px-4 py-2 rounded-full bg-gray-200 text-gray-800 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all shadow-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-900 mb-1">Nova senha</label>
+                                        <input type="password" id="settings-nova-senha" class="w-full px-4 py-2 rounded-full bg-gray-200 text-gray-800 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all shadow-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-900 mb-1">Confirmar nova senha</label>
+                                        <input type="password" id="settings-confirmar-senha" class="w-full px-4 py-2 rounded-full bg-gray-200 text-gray-800 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all shadow-sm">
+                                    </div>
+                                </div>
+                                <div class="mt-8 text-right">
+                                    <button type="button" id="btn-save-password" class="px-8 py-2 bg-[#d49454] hover:bg-[#c28448] text-gray-900 rounded-full font-medium transition-all shadow-sm">
+                                        Salvar
+                                    </button>
+                                </div>
+                            </div>
+                            
                         </form>
                     </div>
 
-                    <div class="bg-red-50 dark:bg-red-900/10 rounded-2xl p-6 md:p-8 border border-red-100 dark:border-red-900/30">
-                        <h4 class="text-red-700 dark:text-red-400 font-bold mb-2 flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                            Zona de Perigo
-                        </h4>
-                        <p class="text-sm text-red-600/80 dark:text-red-400/80 mb-4">Ao excluir sua conta, todos os seus dados, eventos e inscrições serão apagados permanentemente. Esta ação não pode ser desfeita.</p>
-                        <button id="btn-delete-account" class="px-5 py-2.5 bg-white dark:bg-slate-800 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-600 hover:text-white dark:hover:bg-red-600 dark:hover:text-white rounded-xl font-medium transition-all transform hover:-translate-y-0.5 shadow-sm">
-                            Excluir minha conta
+                    <!-- Botão de Sair em destaque para mobile ou na aba -->
+                    <div class="mt-10 flex justify-end">
+                        <button id="btn-logout-settings" class="px-6 py-2 bg-red-100 hover:bg-red-200 text-red-600 rounded-full font-medium transition-all shadow-sm flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                            Sair da conta
                         </button>
                     </div>
                 </div>
-            </div>
+                  </div>
+                </section>
+
+            </div> <!-- /content-area -->
             
         </main>
 
         <!-- MOBILE BOTTOM NAVIGATION -->
         <nav class="md:hidden fixed bottom-0 left-0 w-full bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-800 flex items-center justify-around z-50 h-16 mobile-nav" aria-label="Navegação Móvel">
-            <a href="#overview" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-brand-green [.active]:text-brand-green dark:[.active]:text-brand-green dark:text-gray-400 mobile-nav-item active" data-target="#overview">
+            <a href="#explore-events" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-brand-green [.active]:text-brand-green dark:[.active]:text-brand-green dark:text-gray-400 mobile-nav-item active" data-target="#explore-events">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 min-w-[24px] mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
                 <span class="text-[10px] font-semibold">Início</span>
             </a>
-            <a href="#explore-events" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-brand-green [.active]:text-brand-green dark:[.active]:text-brand-green dark:text-gray-400 mobile-nav-item" data-target="#explore-events">
+            <a href="#overview" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-brand-green [.active]:text-brand-green dark:[.active]:text-brand-green dark:text-gray-400 mobile-nav-item" data-target="#overview">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 min-w-[24px] mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
-                <span class="text-[10px] font-semibold">Explorar</span>
+                <span class="text-[10px] font-semibold">Dashboard</span>
             </a>
             <a href="#my-events" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-brand-green [.active]:text-brand-green dark:[.active]:text-brand-green dark:text-gray-400 mobile-nav-item" data-target="#my-events">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 min-w-[24px] mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>

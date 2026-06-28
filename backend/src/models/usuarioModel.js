@@ -8,6 +8,12 @@ async function buscarPorEmail(email) {
   return linhas[0] || null;
 }
 
+async function buscarPorId(id) {
+  const query = 'SELECT * FROM usuarios WHERE id = ?';
+  const [linhas] = await pool.execute(query, [id]);
+  
+  return linhas[0] || null;
+}
 
 async function salvar(dadosUsuario) {
   const { nome, email, senha } = dadosUsuario;
@@ -22,10 +28,25 @@ async function salvar(dadosUsuario) {
   };
 }
 
-async function atualizar(id, nome, email) {
+async function atualizar(id, nome, email, foto_perfil, senhaHash) {
   try {
-    const query = 'UPDATE usuarios SET nome = ?, email = ? WHERE id = ?';
-    const [resultado] = await pool.execute(query, [nome, email, id]);
+    let query = 'UPDATE usuarios SET nome = ?, email = ?';
+    let params = [nome, email];
+    
+    if (foto_perfil !== undefined) {
+      query += ', foto_perfil = ?';
+      params.push(foto_perfil);
+    }
+    
+    if (senhaHash) {
+      query += ', senha = ?';
+      params.push(senhaHash);
+    }
+    
+    query += ' WHERE id = ?';
+    params.push(id);
+
+    const [resultado] = await pool.execute(query, params);
     return resultado.affectedRows > 0;
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') return false; // Email em uso
@@ -41,6 +62,7 @@ async function excluir(id) {
 
 module.exports = {
   buscarPorEmail,
+  buscarPorId,
   salvar,
   atualizar,
   excluir

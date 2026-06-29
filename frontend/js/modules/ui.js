@@ -216,11 +216,19 @@ export function setupUIBindings() {
         });
     }
 
-    const btnToggleFilters = document.getElementById('btn-toggle-explore-filters');
-    const filtersContainer = document.getElementById('explore-filters-container');
-    if (btnToggleFilters && filtersContainer) {
-        btnToggleFilters.addEventListener('click', () => {
-            filtersContainer.classList.toggle('hidden');
+    const btnToggleViewMode = document.getElementById('btn-toggle-view-mode');
+    if (btnToggleViewMode) {
+        btnToggleViewMode.addEventListener('click', () => {
+            state.exploreListView = !state.exploreListView;
+            
+            // Troca o ícone do botão
+            if (state.exploreListView) {
+                btnToggleViewMode.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256"><path d="M112,48V104a16,16,0,0,1-16,16H40a16,16,0,0,1-16-16V48A16,16,0,0,1,40,32H96A16,16,0,0,1,112,48Zm104-16H160a16,16,0,0,0-16,16v56a16,16,0,0,0,16,16h56a16,16,0,0,0,16-16V48A16,16,0,0,0,216,32ZM112,152v56a16,16,0,0,1-16,16H40a16,16,0,0,1-16-16V152a16,16,0,0,1,16-16H96A16,16,0,0,1,112,152Zm120,0v56a16,16,0,0,1-16,16H160a16,16,0,0,1-16-16V152a16,16,0,0,1,16-16h56A16,16,0,0,1,232,152Z" opacity="0.2" fill="currentColor"></path><path d="M96,24H40A24,24,0,0,0,16,48v56a24,24,0,0,0,24,24H96a24,24,0,0,0,24-24V48A24,24,0,0,0,96,24Zm8,80a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V48a8,8,0,0,1,8-8H96a8,8,0,0,1,8,8ZM216,24H160a24,24,0,0,0-24,24v56a24,24,0,0,0,24,24h56a24,24,0,0,0,24-24V48A24,24,0,0,0,216,24Zm8,80a8,8,0,0,1-8,8H160a8,8,0,0,1-8-8V48a8,8,0,0,1,8-8h56a8,8,0,0,1,8,8Zm-128,24H40a24,24,0,0,0-24,24v56a24,24,0,0,0,24,24H96a24,24,0,0,0,24-24V152A24,24,0,0,0,96,128Zm8,80a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V152a8,8,0,0,1,8-8H96a8,8,0,0,1,8,8Zm112-80H160a24,24,0,0,0-24,24v56a24,24,0,0,0,24,24h56a24,24,0,0,0,24-24V152A24,24,0,0,0,216,128Zm8,80a8,8,0,0,1-8,8H160a8,8,0,0,1-8-8V152a8,8,0,0,1,8-8h56a8,8,0,0,1,8,8Z" fill="currentColor"></path></svg>`;
+            } else {
+                btnToggleViewMode.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256"><path d="M216,64H88a8,8,0,0,1,0-16H216a8,8,0,0,1,0,16Zm0,56H88a8,8,0,0,1,0-16H216a8,8,0,0,1,0,16Zm0,56H88a8,8,0,0,1,0-16H216a8,8,0,0,1,0,16ZM56,48A12,12,0,1,0,68,60,12,12,0,0,0,56,48Zm0,56a12,12,0,1,0,12,12A12,12,0,0,0,56,104Zm0,56a12,12,0,1,0,12,12A12,12,0,0,0,56,160Z" opacity="0.2" fill="currentColor"></path><path d="M224,128a8,8,0,0,1-8,8H88a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM88,72H216a8,8,0,0,0,0-16H88a8,8,0,0,0,0,16ZM216,184H88a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16ZM60,120a8,8,0,1,0,8,8A8,8,0,0,0,60,120Zm0-56a8,8,0,1,0,8,8A8,8,0,0,0,60,64Zm0,112a8,8,0,1,0,8,8A8,8,0,0,0,60,176Z" fill="currentColor"></path></svg>`;
+            }
+
+            import('./events.js').then(m => m.renderExploreEvents());
         });
     }
 
@@ -257,6 +265,24 @@ export function setupUIBindings() {
             }
         });
     }
+
+    const btnCloseEventDetails = document.getElementById('btn-close-event-details');
+    if (btnCloseEventDetails) {
+        btnCloseEventDetails.addEventListener('click', () => {
+            import('./events.js').then(m => m.closeEventProductModal());
+        });
+    }
+    
+    // Close modals on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                if (overlay.id === 'modal-delete-confirm') closeDeleteConfirmModal();
+                else if (overlay.id === 'modal-event-details') import('./events.js').then(m => m.closeEventProductModal());
+            }
+        });
+    });
+
     // Nota: O modal de exclusão de conta é gerenciado por auth.js (setupAuthBindings)
 
     // Sidebar Collapse

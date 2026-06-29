@@ -9,8 +9,10 @@ async function listarPorUsuario(usuarioId) {
 async function listarExplorar(usuarioId) {
   const query = `
     SELECT e.*, 
+           u.nome as criador_nome,
            IF(i.evento_id IS NULL, 0, 1) as inscrito
     FROM eventos e
+    JOIN usuarios u ON e.usuario_id = u.id
     LEFT JOIN inscricoes i ON e.id = i.evento_id AND i.usuario_id = ?
     WHERE e.usuario_id != ?
     ORDER BY e.data ASC, e.hora ASC

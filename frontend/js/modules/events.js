@@ -137,6 +137,15 @@ export function renderExploreEvents() {
     const filtered = getFilteredExploreEvents();
     if (listExplore) {
         listExplore.innerHTML = '';
+        
+        // Aplica o grid baseado no modo de visualização
+        if (state.exploreListView) {
+            listExplore.classList.remove('sm:grid-cols-2');
+            listExplore.classList.add('grid-cols-1');
+        } else {
+            listExplore.classList.add('sm:grid-cols-2');
+        }
+
         if (filtered.length === 0) {
             listExplore.innerHTML = renderEmptyStateMarkup('Nenhum evento disponível', 'Aguarde até que outros usuários publiquem eventos na plataforma.');
         } else {
@@ -155,15 +164,27 @@ function createEventCardElement(ev, isExploreView) {
         const bgStyle = ev.imagem_url ? `background-image: url('${ev.imagem_url}');` : 'background-color: #00a35c;';
         const bgClass = ev.imagem_url ? 'bg-cover bg-center' : '';
         
+        // Se estiver no modo lista, aumenta a altura mínima e muda estilo
+        const heightStyle = state.exploreListView ? 'min-height: 450px;' : 'min-height: 320px;';
+        
         card.className = `relative rounded-3xl overflow-hidden shadow-md transition-all hover:shadow-xl flex flex-col event-card ${bgClass}`;
-        if (bgStyle) card.setAttribute('style', bgStyle);
-        card.style.minHeight = '320px';
+        if (bgStyle) card.setAttribute('style', `${bgStyle} ${heightStyle}`);
+        else card.setAttribute('style', heightStyle);
 
         let actionsHTML = '';
         if (ev.inscrito) {
-            actionsHTML = `<button class="w-full mt-3 flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-sm font-semibold text-white bg-red-500/80 hover:bg-red-600/90 backdrop-blur-md btn-unsubscribe transition-colors" data-id="${ev.id}">Cancelar Inscrição</button>`;
+            actionsHTML = `
+            <div class="flex items-center gap-2 mt-3">
+                <button class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-sm font-bold text-white bg-brand-green/90 hover:bg-brand-green backdrop-blur-md btn-details transition-colors shadow-sm" data-id="${ev.id}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Inscrito
+                </button>
+                <button class="w-12 h-[38px] flex shrink-0 items-center justify-center rounded-xl bg-red-500/80 hover:bg-red-500 text-white backdrop-blur-md btn-unsubscribe-card transition-colors shadow-sm" data-id="${ev.id}" title="Cancelar Inscrição">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>`;
         } else {
-            actionsHTML = `<button class="w-full mt-3 flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-sm font-semibold text-white bg-brand-green/90 hover:bg-brand-green backdrop-blur-md btn-subscribe transition-colors" data-id="${ev.id}">Inscrever-se</button>`;
+            actionsHTML = `<button class="w-full mt-3 flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-sm font-semibold text-brand-dark bg-white/90 hover:bg-white backdrop-blur-md btn-details transition-colors" data-id="${ev.id}">Ver Detalhes</button>`;
         }
 
         card.innerHTML = `
@@ -181,8 +202,8 @@ function createEventCardElement(ev, isExploreView) {
                   <div class="flex items-center gap-2 text-xs font-semibold text-white/90 mb-1">
                       <span>${formatDateString(ev.data)} às ${ev.hora || '00:00'}</span>
                   </div>
-                  <h4 class="text-xl font-bold mb-1 line-clamp-1 drop-shadow-md">${escapeHTML(ev.nome)}</h4>
-                  <p class="text-sm text-white/80 mb-3 line-clamp-2">${escapeHTML(ev.descricao || 'Sem descrição')}</p>
+                  <h4 class="text-xl md:text-2xl font-bold mb-1 line-clamp-1 drop-shadow-md">${escapeHTML(ev.nome)}</h4>
+                  <p class="text-sm text-white/80 mb-3 ${state.exploreListView ? 'line-clamp-4 text-base' : 'line-clamp-2'}">${escapeHTML(ev.descricao || 'Sem descrição')}</p>
                   
                   <div class="flex items-center gap-2 text-xs text-white/90 mb-1">
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
@@ -198,8 +219,15 @@ function createEventCardElement(ev, isExploreView) {
           </div>
         `;
 
-        if (ev.inscrito) card.querySelector('.btn-unsubscribe').addEventListener('click', () => callSubscription(ev.id, 'DELETE'));
-        else card.querySelector('.btn-subscribe').addEventListener('click', () => callSubscription(ev.id, 'POST'));
+        card.querySelector('.btn-details').addEventListener('click', () => openEventProductModal(ev));
+        
+        if (ev.inscrito) {
+            card.querySelector('.btn-unsubscribe-card').addEventListener('click', (e) => {
+                e.stopPropagation();
+                card.querySelector('.btn-unsubscribe-card').innerHTML = '<svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+                callSubscription(ev.id, 'DELETE');
+            });
+        }
 
     } else {
         // Normal style for Dashboard/My Events
@@ -272,11 +300,75 @@ async function callSubscription(eventoId, method) {
     try {
         await handleSubscription(eventoId, method);
         showToast(method === 'POST' ? 'Inscrição confirmada!' : 'Inscrição cancelada!', 'success');
+        
+        // Se a inscrição foi um sucesso, garantimos que fechamos o modal
+        closeEventProductModal();
+
         loadExploreEvents();
         loadEventsFromServer();
     } catch (err) {
         showToast(err.message, 'error');
     }
+}
+
+export function openEventProductModal(ev) {
+    const modal = document.getElementById('modal-event-details');
+    if (!modal) return;
+
+    // Imagem
+    const imgPreview = document.getElementById('details-image');
+    const imgPlaceholder = document.getElementById('details-image-placeholder');
+    if (ev.imagem_url) {
+        imgPreview.src = ev.imagem_url;
+        imgPreview.classList.remove('hidden');
+        imgPlaceholder.classList.add('hidden');
+    } else {
+        imgPreview.src = '';
+        imgPreview.classList.add('hidden');
+        imgPlaceholder.classList.remove('hidden');
+    }
+
+    document.getElementById('details-category').textContent = ev.categoria || 'Geral';
+    document.getElementById('details-date').textContent = `${formatDateString(ev.data)} às ${ev.hora || '00:00'}`;
+    document.getElementById('modal-event-details-title').textContent = ev.nome;
+    document.getElementById('details-local').textContent = ev.local;
+    document.getElementById('details-capacity').textContent = `${ev.inscritos || 0} / ${ev.capacidade || 0} vagas ocupadas`;
+    document.getElementById('details-description').textContent = ev.descricao || 'Nenhuma descrição fornecida para este evento.';
+    
+    const creatorElem = document.getElementById('details-creator');
+    if (creatorElem) {
+        creatorElem.textContent = ev.criador_nome || 'Usuário Norte Eventos';
+    }
+
+    const btnSub = document.getElementById('btn-details-subscribe');
+    btnSub.dataset.id = ev.id;
+    
+    // Limpa o evento de clique antigo (clonando e substituindo o elemento)
+    const newBtnSub = btnSub.cloneNode(true);
+    btnSub.parentNode.replaceChild(newBtnSub, btnSub);
+
+    if (ev.inscrito) {
+        newBtnSub.textContent = 'Cancelar Inscrição';
+        newBtnSub.className = 'w-full flex items-center justify-center gap-3 py-4 px-6 rounded-2xl text-lg font-bold text-white bg-red-500 hover:bg-red-600 transition-colors shadow-lg shadow-red-500/30';
+        newBtnSub.addEventListener('click', () => {
+            newBtnSub.innerHTML = '<svg class="animate-spin h-5 w-5 mx-auto text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+            callSubscription(ev.id, 'DELETE');
+        });
+    } else {
+        newBtnSub.textContent = 'Inscrever-se no Evento';
+        newBtnSub.className = 'w-full flex items-center justify-center gap-3 py-4 px-6 rounded-2xl text-lg font-bold text-white bg-brand-green hover:bg-[#008a4e] transition-colors shadow-lg shadow-brand-green/30';
+        newBtnSub.addEventListener('click', () => {
+            newBtnSub.innerHTML = '<svg class="animate-spin h-5 w-5 mx-auto text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+            callSubscription(ev.id, 'POST');
+        });
+    }
+
+    modal.classList.add('open');
+}
+
+export function closeEventProductModal() {
+    const modal = document.getElementById('modal-event-details');
+    if (modal) modal.classList.remove('open');
 }
 
 async function openEventDetails(eventoId) {

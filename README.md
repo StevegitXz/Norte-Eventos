@@ -14,6 +14,7 @@ O sistema utiliza a arquitetura **MVC (Model-View-Controller)** e contempla as s
 - Interface reativa com sistema de notificações (Toasts) personalizadas.
 - Proteção e restrição de rotas privadas (Dashboard e API de Eventos).
 - Sistema de inscrição e gerenciamento de eventos.
+- **Design System Unificado** com TailwindCSS, interfaces responsivas, Glassmorphism e UX aprimorada em formulários (Floating Labels).
 
 ---
 

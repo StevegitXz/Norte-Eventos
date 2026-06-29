@@ -41,8 +41,15 @@
         .sidebar.collapsed .btn-logout span { display: none; }
         .sidebar.collapsed .btn-logout { padding-left: 0; padding-right: 0; justify-content: center; }
         .sidebar.collapsed .menu-item { justify-content: center; padding-left: 0.5rem; padding-right: 0.5rem; }
-        .sidebar.collapsed .menu-item a { justify-content: center; padding-left: 0.5rem; padding-right: 0.5rem; }
+        .sidebar.collapsed .menu-item a { justify-content: center; padding-left: 0; padding-right: 0; }
         .sidebar.collapsed .sidebar-footer { padding: 0.75rem 0.5rem; }
+        
+        /* Aumentar significativamente os ícones quando colapsado */
+        .sidebar.collapsed .menu-item svg { transform: scale(1.5); transition: transform 0.2s; margin: 0 auto; }
+        .sidebar.collapsed .btn-logout svg { transform: scale(1.4); transition: transform 0.2s; margin: 0 auto; }
+        .sidebar.collapsed .logo-row { flex-direction: column; align-items: center; gap: 1.5rem; justify-content: center; width: 100%; }
+        .sidebar.collapsed .btn-toggle svg { transform: rotate(180deg) scale(1.2); }
+        .sidebar.collapsed .btn-toggle { background: transparent; }
     </style>
 </head>
 <body class="bg-brand-light dark:bg-slate-950 font-sans text-brand-dark dark:text-gray-100 antialiased transition-colors duration-300">
@@ -54,16 +61,19 @@
             <div>
                 <!-- Sidebar Header / Logo & Perfil -->
                 <div class="flex flex-col gap-4 p-6 border-b border-gray-100 dark:border-slate-800 sidebar-header relative">
-                    <!-- Collapse Toggle Button -->
-                    <button id="btn-toggle-sidebar" class="absolute top-4 -right-3.5 flex items-center justify-center w-7 h-7 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-full text-gray-500 hover:text-brand-green shadow-sm z-30 transition-transform duration-300">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-                    </button>
-                    <!-- Logo -->
-                    <div class="flex items-center gap-3">
-                        <div class="flex items-center justify-center w-10 h-10 min-w-[40px] bg-brand-green rounded-xl text-white logo-icon shadow-md shadow-brand-green/30">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+                    <!-- Logo & Toggle Row -->
+                    <div class="flex items-center justify-between w-full logo-row transition-all duration-300">
+                        <!-- Logo -->
+                        <div class="flex items-center gap-3 logo-container">
+                            <div class="flex items-center justify-center w-10 h-10 min-w-[40px] bg-brand-green rounded-xl text-white logo-icon shadow-md shadow-brand-green/30">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+                            </div>
+                            <h1 class="text-xl font-display font-black tracking-tight text-brand-darker dark:text-white logo-text">Norte<span class="text-brand-green">Eventos</span></h1>
                         </div>
-                        <h1 class="text-xl font-display font-black tracking-tight text-brand-darker dark:text-white logo-text">Norte<span class="text-brand-green">Eventos</span></h1>
+                        <!-- Collapse Toggle Button (Top) -->
+                        <button id="btn-toggle-sidebar" class="flex items-center justify-center w-8 h-8 rounded-md text-gray-500 hover:text-brand-green hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors btn-toggle flex-shrink-0" aria-label="Alternar Menu">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.3s ease;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+                        </button>
                     </div>
                     
                     <!-- Foto de perfil no topo esquerdo (Abre tela de Usuário) -->

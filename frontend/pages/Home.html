@@ -5,195 +5,212 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Norte Eventos — Página Inicial</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/css/Home.css"/>
+  <link rel="stylesheet" href="../css/tailwind.css"/>
+  <style>
+    .fade-in-up {
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .clip-ellipse {
+      clip-path: ellipse(70% 100% at 50% 100%);
+    }
+  </style>
 </head>
-<body>
+<body class="font-sans text-brand-dark bg-white overflow-x-hidden">
 
   <!-- NAVBAR -->
-  <nav class="navbar">
-    <div class="nav-inner">
-      <a href="/" class="nav-logo">
-        <img src="/assets/icons/Logo-fd-preto.png" alt="Norte Eventos" class="logo-img"/>
+  <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-[0_2px_12px_rgba(0,0,0,0.08)]">
+    <div class="max-w-[1200px] mx-auto px-8 py-3.5 flex items-center justify-between lg:justify-start lg:gap-10">
+      <a href="/" class="shrink-0">
+        <img src="../assets/icons/Logo-fd-preto.png" alt="Norte Eventos" class="h-12 w-auto"/>
       </a>
-      <ul class="nav-links">
-        <li><a href="#">Lugares</a></li>
-        <li><a href="#" class="active">Home</a></li>
-        <li><a href="#">Serviços</a></li>
-        <li><a href="#">Avaliações</a></li>
-        <li><a href="#">Contatos</a></li>
+      
+      <ul class="hidden lg:flex list-none gap-8 mx-auto">
+        <li><a href="#" class="font-sans text-[0.95rem] font-medium text-brand-dark transition-colors hover:text-[#4cba28]">Lugares</a></li>
+        <li><a href="#" class="font-sans text-[0.95rem] font-medium text-[#4cba28] transition-colors">Home</a></li>
+        <li><a href="#" class="font-sans text-[0.95rem] font-medium text-brand-dark transition-colors hover:text-[#4cba28]">Serviços</a></li>
+        <li><a href="#" class="font-sans text-[0.95rem] font-medium text-brand-dark transition-colors hover:text-[#4cba28]">Avaliações</a></li>
+        <li><a href="#" class="font-sans text-[0.95rem] font-medium text-brand-dark transition-colors hover:text-[#4cba28]">Contatos</a></li>
       </ul>
-      <a href="/login" class="btn-minha-conta">Minha Conta</a>
+      <a href="/login" class="hidden lg:inline-block bg-[#4cba28] text-white font-sans font-semibold text-[0.9rem] px-[22px] py-2.5 rounded-full whitespace-nowrap transition-all hover:bg-[#1a3a0a] hover:-translate-y-[1px]">Minha Conta</a>
     </div>
   </nav>
 
   <!-- HERO -->
-  <section class="hero">
-    <img src="https://www.greenpeace.org/static/planet4-brasil-stateless/2024/05/5b07ea98-floresta-amazonica-1024x682.jpg" alt="Amazônia" class="hero-bg"/>
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <div class="hero-text-wrapper fade-in-up">
-        <p class="hero-number">+ 5000</p>
-        <h1 class="hero-title">EVENTOS REALIZADOS</h1>
-        <p class="hero-sub">E CLIENTES SATISFEITOS</p>
-        <a href="/login" class="btn-hero-cta">Organize seu Evento</a>
+  <section class="relative h-[500px] overflow-hidden flex items-center justify-center">
+    <img src="https://www.greenpeace.org/static/planet4-brasil-stateless/2024/05/5b07ea98-floresta-amazonica-1024x682.jpg" alt="Amazônia" class="absolute inset-0 w-full h-full object-cover object-[center_40%] z-0"/>
+    <div class="absolute inset-0 bg-gradient-to-br from-slate-900/85 to-slate-900/40 z-[1]"></div>
+    <div class="relative z-10 text-white text-center max-w-[800px] px-5">
+      <div class="flex flex-col items-center fade-in-up">
+        <p class="font-display font-black text-[clamp(3rem,5vw,4.5rem)] leading-none text-brand-green mb-2">+ 5000</p>
+        <h1 class="font-display font-black text-[clamp(2rem,4vw,3.5rem)] leading-[1.1] uppercase text-white tracking-[-0.02em]">EVENTOS REALIZADOS</h1>
+        <p class="font-sans font-medium text-[1.1rem] tracking-[0.15em] mt-3 mb-8 text-white/85 uppercase">E CLIENTES SATISFEITOS</p>
+        <a href="/login" class="inline-block bg-[#4cba28] text-white font-sans font-semibold text-[1.05rem] px-8 py-3.5 rounded-full transition-all duration-300 shadow-[0_4px_15px_rgba(16,185,129,0.4)] hover:bg-brand-green hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(16,185,129,0.6)]">Organize seu Evento</a>
       </div>
     </div>
   </section>
 
   <!-- ONDE ESTAMOS -->
-  <section class="onde-estamos">
-    <div class="onde-inner">
-      <h2 class="onde-title">Onde estamos?</h2>
-      <div class="onde-body">
-        <div class="onde-left">
-          <div class="onde-tabs">
-            <button class="tab-btn active-tab">Estados</button>
-            <button class="tab-btn">Contatos</button>
+  <section class="bg-white pt-9 pb-7 px-4">
+    <div class="max-w-[1100px] mx-auto bg-white rounded-[20px] shadow-[0_10px_40px_rgba(15,23,42,0.08)] p-10 md:p-12">
+      <h2 class="font-sans text-[1.1rem] font-medium text-brand-dark mb-5">Onde estamos?</h2>
+      <div class="flex flex-col md:flex-row items-start gap-0">
+        <div class="flex-1 md:pr-12 w-full">
+          <div class="flex gap-2.5 mb-5">
+            <button class="px-6 py-2 rounded-full border-none bg-brand-dark font-sans text-[0.95rem] font-semibold text-white shadow-[0_4px_10px_rgba(15,23,42,0.2)] transition-all">Estados</button>
+            <button class="px-6 py-2 rounded-full border-none bg-[#f8fafc] font-sans text-[0.95rem] font-semibold text-slate-600 hover:bg-slate-200 hover:text-brand-dark transition-all">Contatos</button>
           </div>
-          <div class="onde-estados">
-            <span class="pin-icon">📍</span>
+          <div class="flex items-start gap-2.5 text-slate-600 text-[0.95rem]">
+            <span class="text-[1.1rem] mt-px">📍</span>
             <p>Acre, Amapá, Amazonas, Pará, Rondônia, Roraima e Tocantins</p>
           </div>
         </div>
-        <div class="onde-divider"></div>
-        <div class="onde-right">
-          <h3 class="info-title"><u>Informações</u></h3>
-          <p class="info-text">No Acre, a Norte Eventos transforma ideias em grandes eventos, unindo criatividade, excelência e momentos inesquecíveis.</p>
-          <button class="btn-acre">Acre 🏠</button>
+        
+        <div class="hidden md:block w-px bg-slate-200 self-stretch mr-12"></div>
+        <div class="block md:hidden w-full h-px bg-slate-200 my-5"></div>
+        
+        <div class="flex-1 w-full flex flex-col gap-3 md:pl-0">
+          <h3 class="font-sans text-base font-semibold text-brand-dark underline">Informações</h3>
+          <p class="text-[0.9rem] text-slate-600 leading-[1.6]">No Acre, a Norte Eventos transforma ideias em grandes eventos, unindo criatividade, excelência e momentos inesquecíveis.</p>
+          <button class="self-start md:self-end bg-amber-500 hover:bg-[#a85e1a] text-white border-none rounded-lg px-5 py-2.5 font-sans font-semibold text-[0.9rem] cursor-pointer transition-colors mt-2">Acre 🏠</button>
         </div>
       </div>
     </div>
   </section>
 
   <!-- CARDS -->
-  <section class="cards-section">
-    <div class="cards-inner">
-      <div class="event-card">
-        <div class="card-img-wrap">
-          <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=400&q=80" alt="Corporativo"/>
+  <section class="bg-slate-50 py-15 px-8">
+    <div class="max-w-[1100px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="group bg-white rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_12px_30px_rgba(0,0,0,0.1)]">
+        <div class="w-full h-[200px] overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=400&q=80" alt="Corporativo" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"/>
         </div>
-        <div class="card-content">
-          <h4>Corporativos</h4>
-          <p>Eventos corporativos com planejamento e inovação, criando experiências profissionais que fortalecem marcas e tornam cada ocasião memorável.</p>
-        </div>
-      </div>
-      <div class="event-card">
-        <div class="card-img-wrap">
-          <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=400&q=80" alt="Sociais"/>
-        </div>
-        <div class="card-content">
-          <h4>Sociais</h4>
-          <p>Eventos sociais com elegância e organização, criando experiências especiais que aproximam pessoas e tornam cada celebração única e inesquecível.</p>
+        <div class="p-6">
+          <h4 class="font-display font-bold text-[1.2rem] text-brand-dark mb-3">Corporativos</h4>
+          <p class="text-[0.95rem] text-slate-600 leading-[1.6]">Eventos corporativos com planejamento e inovação, criando experiências profissionais que fortalecem marcas e tornam cada ocasião memorável.</p>
         </div>
       </div>
-      <div class="event-card">
-        <div class="card-img-wrap">
-          <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=400&q=80" alt="Culturais"/>
+      <div class="group bg-white rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_12px_30px_rgba(0,0,0,0.1)]">
+        <div class="w-full h-[200px] overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=400&q=80" alt="Sociais" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"/>
         </div>
-        <div class="card-content">
-          <h4>Culturais</h4>
-          <p>Eventos culturais com criatividade e planejamento, promovendo experiências enriquecedoras que valorizam a arte, a cultura e a conexão entre pessoas.</p>
+        <div class="p-6">
+          <h4 class="font-display font-bold text-[1.2rem] text-brand-dark mb-3">Sociais</h4>
+          <p class="text-[0.95rem] text-slate-600 leading-[1.6]">Eventos sociais com elegância e organização, criando experiências especiais que aproximam pessoas e tornam cada celebração única e inesquecível.</p>
+        </div>
+      </div>
+      <div class="group bg-white rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_12px_30px_rgba(0,0,0,0.1)]">
+        <div class="w-full h-[200px] overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=400&q=80" alt="Culturais" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"/>
+        </div>
+        <div class="p-6">
+          <h4 class="font-display font-bold text-[1.2rem] text-brand-dark mb-3">Culturais</h4>
+          <p class="text-[0.95rem] text-slate-600 leading-[1.6]">Eventos culturais com criatividade e planejamento, promovendo experiências enriquecedoras que valorizam a arte, a cultura e a conexão entre pessoas.</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- BANNER REGIÃO NORTE -->
-  <section class="banner-regiao">
-    <div class="banner-bg-wrap">
-      <img src="https://res.cloudinary.com/dpnexaukz/image/upload/v1761928828/dresses/t3t1bgsgiay9vo5swfey.jpg" alt="Região Norte" class="banner-bg-img"/>
-      <div class="banner-overlay"></div>
+  <section class="relative h-[180px] flex items-center justify-center overflow-hidden">
+    <div class="absolute inset-0">
+      <img src="https://res.cloudinary.com/dpnexaukz/image/upload/v1761928828/dresses/t3t1bgsgiay9vo5swfey.jpg" alt="Região Norte" class="w-full h-full object-cover brightness-[0.55] saturate-[0.8]"/>
+      <div class="absolute inset-0 bg-black/35"></div>
     </div>
-    <h2 class="banner-text">PRESENTE EM TODA REGIÃO NORTE</h2>
+    <h2 class="relative z-10 font-display font-black text-[clamp(1.6rem,3.5vw,2.6rem)] text-white uppercase text-center tracking-[0.04em] shadow-black/50 drop-shadow-md">PRESENTE EM TODA REGIÃO NORTE</h2>
   </section>
 
   <!-- STATS + SOBRE -->
-  <section class="stats-section">
-    <div class="stats-inner">
-      <div class="stats-content">
-        <div class="stats-header text-center">
-          <h2>Nossa Trajetória</h2>
-          <p class="subtitle">Excelência em cada detalhe, desde 2021.</p>
+  <section class="bg-brand-dark">
+    <div class="flex flex-col md:flex-row min-h-[500px]">
+      <div class="flex-1 flex flex-col justify-center bg-brand-dark p-10 lg:p-[60px_40px]">
+        <div class="mb-10 text-center md:text-left">
+          <h2 class="font-display font-extrabold text-[2.2rem] text-white mb-2">Nossa Trajetória</h2>
+          <p class="text-brand-green text-[1.1rem] font-medium">Excelência em cada detalhe, desde 2021.</p>
         </div>
-        <div class="stats-numbers">
-          <div class="stat-item">
-            <span class="stat-num">5.284</span>
-            <span class="stat-label">Eventos<br>gerenciados</span>
+        <div class="flex flex-col md:flex-row justify-between gap-6 pb-10 border-b border-white/10 mb-10">
+          <div class="flex flex-col items-center md:items-start gap-2">
+            <span class="font-display font-black text-5xl text-brand-green leading-none">5.284</span>
+            <span class="font-sans text-[0.95rem] text-white/80 leading-[1.4] text-center md:text-left">Eventos<br>gerenciados</span>
           </div>
-          <div class="stat-item">
-            <span class="stat-num">98%</span>
-            <span class="stat-label">De satisfação<br>dos clientes</span>
+          <div class="flex flex-col items-center md:items-start gap-2">
+            <span class="font-display font-black text-5xl text-brand-green leading-none">98%</span>
+            <span class="font-sans text-[0.95rem] text-white/80 leading-[1.4] text-center md:text-left">De satisfação<br>dos clientes</span>
           </div>
-          <div class="stat-item">
-            <span class="stat-num">86%</span>
-            <span class="stat-label">Nos buscam<br>novamente</span>
+          <div class="flex flex-col items-center md:items-start gap-2">
+            <span class="font-display font-black text-5xl text-brand-green leading-none">86%</span>
+            <span class="font-sans text-[0.95rem] text-white/80 leading-[1.4] text-center md:text-left">Nos buscam<br>novamente</span>
           </div>
         </div>
-        <div class="stats-sobre">
-          <p>A Norte Eventos é especializada no planejamento, organização e gestão de eventos sociais, corporativos, culturais e institucionais em toda a Região Norte. Nos destacamos pela criatividade, excelência logística e atendimento personalizado, realizando palestras, feiras, confraternizações, shows e cerimônias com experiências únicas.</p>
+        <div>
+          <p class="font-sans text-[1.05rem] leading-[1.8] text-white/85">A Norte Eventos é especializada no planejamento, organização e gestão de eventos sociais, corporativos, culturais e institucionais em toda a Região Norte. Nos destacamos pela criatividade, excelência logística e atendimento personalizado, realizando palestras, feiras, confraternizações, shows e cerimônias com experiências únicas.</p>
         </div>
       </div>
-      <div class="stats-photo">
-        <img src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=700&q=80" alt="Evento"/>
+      <div class="md:flex-none md:w-[45%] h-[300px] md:h-auto overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=700&q=80" alt="Evento" class="w-full h-full object-cover brightness-80"/>
       </div>
     </div>
   </section>
 
   <!-- CTA -->
-  <section class="cta-section">
-    <p class="cta-sub">Faça parte você também</p>
-    <a href="/cadastro" class="btn-cta">Cadastrar evento</a>
+  <section class="bg-gradient-to-b from-white to-slate-50 pt-20 px-8 pb-[120px] text-center relative">
+    <div class="absolute bottom-0 left-0 right-0 h-20 bg-brand-dark clip-ellipse"></div>
+    <p class="font-sans text-[1.2rem] font-medium text-slate-600 mb-8 relative z-10">Faça parte você também</p>
+    <a href="/cadastro" class="inline-block bg-[#4cba28] text-white font-sans font-semibold text-[0.95rem] px-9 py-3.5 rounded-full transition-all hover:bg-[#1a3a0a] hover:-translate-y-0.5 relative z-10">Cadastrar evento</a>
   </section>
 
   <!-- FOOTER -->
-  <footer class="footer">
-    <div class="footer-inner">
-      <div class="footer-logo">
-        <img src="/assets/icons/Logo.png" alt="Norte Eventos"/>
+  <footer class="bg-brand-dark pt-14 px-8 pb-10">
+    <div class="max-w-[1100px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[180px_1fr_1fr_1fr_1fr] gap-10 items-start">
+      <div>
+        <img src="../assets/icons/Logo.png" alt="Norte Eventos" class="h-14 w-auto brightness-0 invert mt-1"/>
       </div>
-      <div class="footer-col">
-        <h4>CONTATO</h4>
-        <p>Rua das Acácias, 1845 — Sala 302<br>Bairro Jardim Central<br>Rio Branco — AC</p>
-        <p><a href="mailto:norteeventos.contato@gmail.com">norteeventos.contato@gmail.com</a></p>
-        <p class="footer-phone">&#9742; xx xxxxx xxxx</p>
-        <div class="footer-socials">
-          <a href="#" aria-label="Facebook">
+      <div>
+        <h4 class="font-display font-bold text-[0.78rem] tracking-[0.1em] text-brand-green mb-4 uppercase">CONTATO</h4>
+        <p class="text-[0.85rem] text-white/75 leading-[1.7] mb-2.5">Rua das Acácias, 1845 — Sala 302<br>Bairro Jardim Central<br>Rio Branco — AC</p>
+        <p class="text-[0.85rem] text-white/75 leading-[1.7] mb-2.5"><a href="mailto:norteeventos.contato@gmail.com" class="hover:text-brand-green transition-colors">norteeventos.contato@gmail.com</a></p>
+        <p class="flex items-center gap-1.5 text-white/75 text-[0.85rem]">&#9742; xx xxxxx xxxx</p>
+        <div class="flex gap-3.5 mt-4">
+          <a href="#" aria-label="Facebook" class="text-white/75 hover:text-brand-green transition-colors">
             <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
           </a>
-          <a href="#" aria-label="Instagram">
+          <a href="#" aria-label="Instagram" class="text-white/75 hover:text-brand-green transition-colors">
             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
           </a>
-          <a href="#" aria-label="X">
+          <a href="#" aria-label="X" class="text-white/75 hover:text-brand-green transition-colors">
             <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
           </a>
         </div>
       </div>
-      <div class="footer-col">
-        <h4>UTILIDADE</h4>
-        <ul>
-          <li><a href="#">Início</a></li>
-          <li><a href="#">Publique Conosco</a></li>
-          <li><a href="#">Envie seu Currículo</a></li>
-          <li><a href="#">FAQ</a></li>
+      <div>
+        <h4 class="font-display font-bold text-[0.78rem] tracking-[0.1em] text-brand-green mb-4 uppercase">UTILIDADE</h4>
+        <ul class="flex flex-col gap-2.5">
+          <li><a href="#" class="text-[0.85rem] text-white/75 hover:text-brand-green transition-colors">Início</a></li>
+          <li><a href="#" class="text-[0.85rem] text-white/75 hover:text-brand-green transition-colors">Publique Conosco</a></li>
+          <li><a href="#" class="text-[0.85rem] text-white/75 hover:text-brand-green transition-colors">Envie seu Currículo</a></li>
+          <li><a href="#" class="text-[0.85rem] text-white/75 hover:text-brand-green transition-colors">FAQ</a></li>
         </ul>
       </div>
-      <div class="footer-col">
-        <h4>SOBRE-NÓS</h4>
-        <ul>
-          <li><a href="#">Nossa Política</a></li>
-          <li><a href="#">Sobre a Empresa</a></li>
+      <div>
+        <h4 class="font-display font-bold text-[0.78rem] tracking-[0.1em] text-brand-green mb-4 uppercase">SOBRE-NÓS</h4>
+        <ul class="flex flex-col gap-2.5">
+          <li><a href="#" class="text-[0.85rem] text-white/75 hover:text-brand-green transition-colors">Nossa Política</a></li>
+          <li><a href="#" class="text-[0.85rem] text-white/75 hover:text-brand-green transition-colors">Sobre a Empresa</a></li>
         </ul>
       </div>
-      <div class="footer-col">
-        <h4>INFORMAÇÕES LEGAIS</h4>
-        <ul>
-          <li><a href="#">Termos de Uso</a></li>
-          <li><a href="#">Política de Privacidade</a></li>
+      <div>
+        <h4 class="font-display font-bold text-[0.78rem] tracking-[0.1em] text-brand-green mb-4 uppercase">INFORMAÇÕES LEGAIS</h4>
+        <ul class="flex flex-col gap-2.5">
+          <li><a href="#" class="text-[0.85rem] text-white/75 hover:text-brand-green transition-colors">Termos de Uso</a></li>
+          <li><a href="#" class="text-[0.85rem] text-white/75 hover:text-brand-green transition-colors">Política de Privacidade</a></li>
         </ul>
       </div>
     </div>
   </footer>
 
-  <script src="/js/Home.js"></script>
+  <script src="../js/Home.js"></script>
 </body>
 </html>

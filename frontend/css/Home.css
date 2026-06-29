@@ -6,16 +6,16 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --green:       #10b981; /* Emerald 500 */
-  --green-light: #34d399; /* Emerald 400 */
-  --green-dark:  #047857; /* Emerald 700 */
+  --green:       #4cba28; /* Green Mid (predominant) */
+  --green-light: #6ed44a; /* Green Light */
+  --green-dark:  #1a3a0a; /* Green Dark */
   --orange:      #f59e0b; /* Amber 500 */
-  --navy:        #0f172a; /* Slate 900 */
-  --brown-dark:  #1e293b; /* Slate 800 (Replacing brown) */
+  --navy:        #0d1f2d; /* Dark Navy from login.css */
+  --brown-dark:  #0d1f2d; /* Make footer match the navy */
   --white:       #ffffff;
-  --gray-light:  #f8fafc; /* Slate 50 */
-  --text:        #1e293b; /* Slate 800 */
-  --text-muted:  #64748b; /* Slate 500 */
+  --gray-light:  #f8fafc;
+  --text:        #0d1f2d; /* Text matches dark navy */
+  --text-muted:  #4a5568; 
 }
 
 html { scroll-behavior: smooth; }

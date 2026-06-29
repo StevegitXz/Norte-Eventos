@@ -95,20 +95,9 @@ app.post('/api/upload', verificarAutenticacao, (req, res) => {
 });
 
 // Rota da página Inicial
-app.get('/', (req, res) => {
-    // Verifica se o usuário já tem um token válido no cookie
-    const token = req.cookies.norte_eventos_token;
-    if (token) {
-        try {
-            // Se o token for válido, manda direto pra Dashboard
-            jwt.verify(token, process.env.JWT_SECRET);
-            return res.redirect('/dashboard');
-        } catch (error) {
-            // Token inválido/expirado, ignora e mostra a Home
-        }
-    }
-    
-    // Se não tem token ou é inválido, exibe a Home normal
+app.get(['/', '/home'], (req, res) => {
+    // Exibe a Home para todos. 
+    // O cookie continua no navegador, então se o usuário voltar para o /dashboard, ainda estará logado.
     res.sendFile(path.join(__dirname, '../frontend/pages/Home.html'));
 });
 

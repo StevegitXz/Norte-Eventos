@@ -29,9 +29,10 @@
         .event-card-gradient-4 { background-image: linear-gradient(to right, #db2777, #ec4899); color: white; }
         .event-card-gradient-5 { background-image: linear-gradient(to right, #7c3aed, #8b5cf6); color: white; }
 
+        /* Sidebar Width Control */
+        .sidebar { width: 16rem; transition: width 0.3s ease; }
         /* Sidebar Collapse Styles */
-        .sidebar { transition: width 0.3s ease; }
-        .sidebar.collapsed { width: 5rem; } /* w-20 */
+        .sidebar.collapsed { width: 5rem !important; }
         .sidebar.collapsed .logo-text { display: none; }
         .sidebar.collapsed .user-details { display: none; }
         .sidebar.collapsed .sidebar-menu span { display: none; }
@@ -40,6 +41,8 @@
         .sidebar.collapsed .btn-logout span { display: none; }
         .sidebar.collapsed .btn-logout { padding-left: 0; padding-right: 0; justify-content: center; }
         .sidebar.collapsed .menu-item { justify-content: center; padding-left: 0.5rem; padding-right: 0.5rem; }
+        .sidebar.collapsed .menu-item a { justify-content: center; padding-left: 0.5rem; padding-right: 0.5rem; }
+        .sidebar.collapsed .sidebar-footer { padding: 0.75rem 0.5rem; }
     </style>
 </head>
 <body class="bg-brand-light dark:bg-slate-950 font-sans text-brand-dark dark:text-gray-100 antialiased transition-colors duration-300">
@@ -47,7 +50,7 @@
     <div class="flex h-screen overflow-hidden dashboard-container">
         
         <!-- SIDEBAR -->
-        <aside id="main-sidebar" class="sidebar hidden md:flex flex-col w-64 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 shadow-sm z-20 justify-between transition-colors duration-300">
+        <aside id="main-sidebar" class="sidebar hidden md:flex flex-col bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 shadow-sm z-20 justify-between transition-colors duration-300">
             <div>
                 <!-- Sidebar Header / Logo & Perfil -->
                 <div class="flex flex-col gap-4 p-6 border-b border-gray-100 dark:border-slate-800 sidebar-header relative">

@@ -48,9 +48,13 @@ export function setupAuthBindings() {
     if (btnLogout) {
         btnLogout.addEventListener('click', async (e) => {
             e.preventDefault();
+            // Limpar cookie no lado do cliente para garantir logout
+            document.cookie = 'norte_eventos_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
             try {
                 await logoutUser();
-            } catch (error) {}
+            } catch (error) {
+                console.warn('Erro ao fazer logout no servidor:', error);
+            }
             showToast('Sessão finalizada com sucesso. Até logo!', 'success');
             setTimeout(() => { window.location.href = '/login'; }, 1000);
         });
@@ -60,7 +64,11 @@ export function setupAuthBindings() {
     if (btnLogoutSettings) {
         btnLogoutSettings.addEventListener('click', async (e) => {
             e.preventDefault();
-            try { await logoutUser(); } catch (error) {}
+            // Limpar cookie no lado do cliente para garantir logout
+            document.cookie = 'norte_eventos_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            try { await logoutUser(); } catch (error) {
+                console.warn('Erro ao fazer logout no servidor:', error);
+            }
             showToast('Sessão finalizada com sucesso. Até logo!', 'success');
             setTimeout(() => { window.location.href = '/login'; }, 1000);
         });

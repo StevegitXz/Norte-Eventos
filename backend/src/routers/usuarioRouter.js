@@ -4,8 +4,18 @@ const usuarioController = require('../controllers/usuarioController');
 const verificarAutenticacao = require('../middlewares/authMiddleware');
 const multer = require('multer');
 const path = require('path');
+const rateLimit = require('express-rate-limit');
 
 const fs = require('fs');
+
+// Rate Limiter apenas para rotas de autenticação (login/cadastro)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 15,
+  message: { erro: 'Muitas tentativas de acesso. Por favor, tente novamente mais tarde.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -22,8 +32,8 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-router.post('/', usuarioController.cadastrar);
-router.post('/login', usuarioController.login);
+router.post('/', authLimiter, usuarioController.cadastrar);
+router.post('/login', authLimiter, usuarioController.login);
 router.get('/me', verificarAutenticacao, usuarioController.obterUsuarioLogado);
 router.put('/me', verificarAutenticacao, upload.single('foto_perfil'), usuarioController.atualizarUsuario);
 router.delete('/me', verificarAutenticacao, usuarioController.excluirConta);

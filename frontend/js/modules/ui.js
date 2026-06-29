@@ -176,11 +176,19 @@ export function setupUIBindings() {
         });
     });
 
+    // Topbar Search — sincroniza com ambas as abas (Início e Meus Eventos)
     const searchInput = document.getElementById('topbar-search-input');
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
             state.searchQuery = e.target.value;
+            state.exploreSearchQuery = e.target.value;
             renderEvents();
+            renderExploreEvents();
+            // Sincronizar com a barra de busca da aba Início
+            const exploreInput = document.getElementById('explore-search-input');
+            if (exploreInput && exploreInput.value !== e.target.value) {
+                exploreInput.value = e.target.value;
+            }
         });
     }
 
@@ -197,7 +205,14 @@ export function setupUIBindings() {
     if (exploreSearchInput) {
         exploreSearchInput.addEventListener('input', (e) => {
             state.exploreSearchQuery = e.target.value;
+            state.searchQuery = e.target.value;
             renderExploreEvents();
+            renderEvents();
+            // Sincronizar com a barra de busca do topbar
+            const topbarInput = document.getElementById('topbar-search-input');
+            if (topbarInput && topbarInput.value !== e.target.value) {
+                topbarInput.value = e.target.value;
+            }
         });
     }
 
@@ -242,24 +257,7 @@ export function setupUIBindings() {
             }
         });
     }
-    
-    const btnCloseDeleteAccountModal = document.getElementById('btn-close-delete-account-modal');
-    const btnCancelDeleteAccount = document.getElementById('btn-cancel-delete-account');
-    const btnConfirmDeleteAccount = document.getElementById('btn-confirm-delete-account');
-
-    if (btnCloseDeleteAccountModal) btnCloseDeleteAccountModal.addEventListener('click', closeDeleteAccountConfirmModal);
-    if (btnCancelDeleteAccount) btnCancelDeleteAccount.addEventListener('click', closeDeleteAccountConfirmModal);
-    if (btnConfirmDeleteAccount) {
-        btnConfirmDeleteAccount.addEventListener('click', async () => {
-            try {
-                await deleteAccount();
-                closeDeleteAccountConfirmModal();
-                window.location.href = '/login';
-            } catch (err) {
-                console.error('Erro ao excluir conta', err);
-            }
-        });
-    }
+    // Nota: O modal de exclusão de conta é gerenciado por auth.js (setupAuthBindings)
 
     // Sidebar Collapse
     const btnToggleSidebar = document.getElementById('btn-toggle-sidebar');

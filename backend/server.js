@@ -37,8 +37,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../frontend')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Rotas da API
-app.use('/api/usuarios', authLimiter, usuarioRouter);
+// Rotas da API (authLimiter aplicado diretamente nas rotas de login/cadastro no router)
+app.use('/api/usuarios', usuarioRouter);
 app.use('/api/eventos', verificarAutenticacao, eventoRouter);
 app.use('/api/notificacoes', verificarAutenticacao, notificacaoRouter);
 

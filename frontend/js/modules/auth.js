@@ -48,8 +48,6 @@ export function setupAuthBindings() {
     if (btnLogout) {
         btnLogout.addEventListener('click', async (e) => {
             e.preventDefault();
-            // Limpar cookie no lado do cliente para garantir logout
-            document.cookie = 'norte_eventos_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
             try {
                 await logoutUser();
             } catch (error) {
@@ -64,8 +62,6 @@ export function setupAuthBindings() {
     if (btnLogoutSettings) {
         btnLogoutSettings.addEventListener('click', async (e) => {
             e.preventDefault();
-            // Limpar cookie no lado do cliente para garantir logout
-            document.cookie = 'norte_eventos_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
             try { await logoutUser(); } catch (error) {
                 console.warn('Erro ao fazer logout no servidor:', error);
             }

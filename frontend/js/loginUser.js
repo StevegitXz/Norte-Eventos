@@ -5,11 +5,10 @@ document.getElementById('formLogin').addEventListener('submit', async (e) => {
     const senha = document.getElementById('senha').value;
 
     try {
-        // Usar a URL absoluta do backend local para evitar problemas se usar Live Server
-        const resposta = await fetch('http://localhost:3000/api/usuarios/login', {
+        const resposta = await fetch('/api/usuarios/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            credentials: 'include', // Necessário para enviar e receber cookies entre 127.0.0.1 e localhost
+            credentials: 'same-origin',
             body: JSON.stringify({ email, senha })
         });
 
@@ -18,7 +17,7 @@ document.getElementById('formLogin').addEventListener('submit', async (e) => {
         if (resposta.ok) {
             showToast('Logado com sucesso!', 'success');
             setTimeout(() => {
-                window.location.href = 'http://localhost:3000/dashboard';
+                window.location.href = '/dashboard';
             }, 1000);
         } else {
             showToast('Erro no login: ' + dados.erro, 'error');
@@ -27,8 +26,6 @@ document.getElementById('formLogin').addEventListener('submit', async (e) => {
         showToast('Não foi possível conectar ao servidor.', 'error');
     }
 });
-
-
 
 window.addEventListener('load', () => {
   document.body.classList.add('loaded');
@@ -43,18 +40,23 @@ document.querySelectorAll('button').forEach((btn) => {
   });
 });
 
-document.getElementById('btnCadastro').addEventListener('click', () => {
-  window.location.href = 'index.html';
-});
+const btnCadastro = document.getElementById('btnCadastro');
+if (btnCadastro) {
+  btnCadastro.addEventListener('click', () => {
+    window.location.href = '/cadastro';
+  });
+}
 
+const btnGoogle = document.getElementById('btnGoogle');
+if (btnGoogle) {
+  btnGoogle.addEventListener('click', () => {
+    alert('Redirecionando para o Google...');
+  });
+}
 
-
-document.getElementById('btnGoogle').addEventListener('click', () => {
-  console.log('Entrar com Google');
-  alert('Redirecionando para o Google...');
-});
-
-document.getElementById('btnFacebook').addEventListener('click', () => {
-  console.log('Entrar com Facebook');
-  alert('Redirecionando para o Facebook...');
-});
+const btnFacebook = document.getElementById('btnFacebook');
+if (btnFacebook) {
+  btnFacebook.addEventListener('click', () => {
+    alert('Redirecionando para o Facebook...');
+  });
+}

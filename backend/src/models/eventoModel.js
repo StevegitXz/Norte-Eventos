@@ -25,17 +25,43 @@ async function inscrever(usuarioId, eventoId) {
   const connection = await pool.getConnection();
   try {
     await connection.beginTransaction();
-    await connection.execute('INSERT INTO inscricoes (usuario_id, evento_id) VALUES (?, ?)', [usuarioId, eventoId]);
-    await connection.execute('UPDATE eventos SET inscritos = inscritos + 1 WHERE id = ?', [eventoId]);
-    
-    // Buscar o dono do evento para notificação
-    const [eventos] = await connection.execute('SELECT usuario_id FROM eventos WHERE id = ?', [eventoId]);
-    
+
+    // Bloqueia a linha do evento para validar capacidade e propriedade com segurança contra race conditions
+    const [eventos] = await connection.execute(
+      'SELECT id, usuario_id, capacidade, inscritos FROM eventos WHERE id = ? FOR UPDATE',
+      [eventoId]
+    );
+
+    if (eventos.length === 0) {
+      throw new Error('EVENT_NOT_FOUND');
+    }
+
+    const evento = eventos[0];
+
+    if (evento.usuario_id === usuarioId) {
+      throw new Error('OWNER_CANNOT_SUBSCRIBE');
+    }
+
+    if (evento.inscritos >= evento.capacidade) {
+      throw new Error('EVENT_FULL');
+    }
+
+    await connection.execute(
+      'INSERT INTO inscricoes (usuario_id, evento_id) VALUES (?, ?)',
+      [usuarioId, eventoId]
+    );
+    await connection.execute(
+      'UPDATE eventos SET inscritos = inscritos + 1 WHERE id = ?',
+      [eventoId]
+    );
+
     await connection.commit();
-    return { sucesso: true, dono_evento_id: eventos[0]?.usuario_id };
+    return { sucesso: true, dono_evento_id: evento.usuario_id };
   } catch (error) {
     await connection.rollback();
-    if (error.code === 'ER_DUP_ENTRY') return true; // Já inscrito
+    if (error.code === 'ER_DUP_ENTRY') {
+      throw new Error('ALREADY_SUBSCRIBED');
+    }
     throw error;
   } finally {
     connection.release();
@@ -46,9 +72,15 @@ async function cancelarInscricao(usuarioId, eventoId) {
   const connection = await pool.getConnection();
   try {
     await connection.beginTransaction();
-    const [res] = await connection.execute('DELETE FROM inscricoes WHERE usuario_id = ? AND evento_id = ?', [usuarioId, eventoId]);
+    const [res] = await connection.execute(
+      'DELETE FROM inscricoes WHERE usuario_id = ? AND evento_id = ?',
+      [usuarioId, eventoId]
+    );
     if (res.affectedRows > 0) {
-      await connection.execute('UPDATE eventos SET inscritos = inscritos - 1 WHERE id = ?', [eventoId]);
+      await connection.execute(
+        'UPDATE eventos SET inscritos = GREATEST(inscritos - 1, 0) WHERE id = ?',
+        [eventoId]
+      );
     }
     await connection.commit();
     return true;
@@ -61,42 +93,101 @@ async function cancelarInscricao(usuarioId, eventoId) {
 }
 
 async function criar(dadosEvento, usuarioId) {
-  const { nome, categoria, capacidade, data, hora, local, descricao, bannerClass, imagem_url, inscritos } = dadosEvento;
-  
+  const { nome, categoria, capacidade, data, hora, local, descricao, bannerClass, imagem_url } = dadosEvento;
+
   const query = `
     INSERT INTO eventos 
     (usuario_id, nome, categoria, capacidade, data, hora, local, descricao, bannerClass, imagem_url, inscritos) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
   `;
-  
+
   const [resultado] = await pool.execute(query, [
-    usuarioId, nome, categoria, capacidade, data, hora, local, descricao, bannerClass, imagem_url || null, inscritos || 0
+    usuarioId,
+    nome,
+    categoria,
+    capacidade,
+    data,
+    hora,
+    local,
+    descricao || null,
+    bannerClass,
+    imagem_url || null
   ]);
-  
-  return { id: resultado.insertId, ...dadosEvento, usuario_id: usuarioId };
+
+  return {
+    id: resultado.insertId,
+    nome,
+    categoria,
+    capacidade,
+    data,
+    hora,
+    local,
+    descricao: descricao || null,
+    bannerClass,
+    imagem_url: imagem_url || null,
+    inscritos: 0,
+    usuario_id: usuarioId
+  };
 }
 
 async function atualizar(id, dadosEvento, usuarioId) {
   const { nome, categoria, capacidade, data, hora, local, descricao, bannerClass, imagem_url } = dadosEvento;
-  
+
+  const [atuais] = await pool.execute(
+    'SELECT imagem_url FROM eventos WHERE id = ? AND usuario_id = ?',
+    [id, usuarioId]
+  );
+
+  if (atuais.length === 0) {
+    return { atualizado: false, imagemAnterior: null };
+  }
+
+  const imagemAnterior = atuais[0].imagem_url;
+  const novaImagem = imagem_url !== undefined ? imagem_url : imagemAnterior;
+
   const query = `
     UPDATE eventos SET 
       nome = ?, categoria = ?, capacidade = ?, data = ?, hora = ?, 
       local = ?, descricao = ?, bannerClass = ?, imagem_url = ?
     WHERE id = ? AND usuario_id = ?
   `;
-  
+
   const [resultado] = await pool.execute(query, [
-    nome, categoria, capacidade, data, hora, local, descricao, bannerClass, imagem_url || null, id, usuarioId
+    nome,
+    categoria,
+    capacidade,
+    data,
+    hora,
+    local,
+    descricao || null,
+    bannerClass,
+    novaImagem || null,
+    id,
+    usuarioId
   ]);
-  
-  return resultado.affectedRows > 0;
+
+  return {
+    atualizado: resultado.affectedRows > 0,
+    imagemAnterior: imagem_url !== undefined && imagemAnterior !== novaImagem ? imagemAnterior : null
+  };
 }
 
 async function excluir(id, usuarioId) {
+  const [atuais] = await pool.execute(
+    'SELECT imagem_url FROM eventos WHERE id = ? AND usuario_id = ?',
+    [id, usuarioId]
+  );
+
+  if (atuais.length === 0) {
+    return { excluido: false, imagemAnterior: null };
+  }
+
   const query = 'DELETE FROM eventos WHERE id = ? AND usuario_id = ?';
   const [resultado] = await pool.execute(query, [id, usuarioId]);
-  return resultado.affectedRows > 0;
+  return {
+    excluido: resultado.affectedRows > 0,
+    imagemAnterior: atuais[0].imagem_url
+  };
 }
 
 // -----------------------------------------------------
@@ -104,12 +195,11 @@ async function excluir(id, usuarioId) {
 // -----------------------------------------------------
 
 async function listarParticipantes(eventoId, usuarioId) {
-  // Verifica se o usuário é o dono do evento
   const queryDono = 'SELECT id FROM eventos WHERE id = ? AND usuario_id = ?';
   const [evento] = await pool.execute(queryDono, [eventoId, usuarioId]);
-  
+
   if (evento.length === 0) {
-    throw new Error('UNAUTHORIZED'); // Não é dono ou evento não existe
+    throw new Error('UNAUTHORIZED');
   }
 
   const queryParticipantes = `
@@ -128,13 +218,21 @@ async function removerParticipante(eventoId, participanteId, usuarioId) {
   try {
     await connection.beginTransaction();
 
-    // Verifica se é o dono
-    const [evento] = await connection.execute('SELECT id FROM eventos WHERE id = ? AND usuario_id = ?', [eventoId, usuarioId]);
+    const [evento] = await connection.execute(
+      'SELECT id FROM eventos WHERE id = ? AND usuario_id = ? FOR UPDATE',
+      [eventoId, usuarioId]
+    );
     if (evento.length === 0) throw new Error('UNAUTHORIZED');
 
-    const [res] = await connection.execute('DELETE FROM inscricoes WHERE evento_id = ? AND usuario_id = ?', [eventoId, participanteId]);
+    const [res] = await connection.execute(
+      'DELETE FROM inscricoes WHERE evento_id = ? AND usuario_id = ?',
+      [eventoId, participanteId]
+    );
     if (res.affectedRows > 0) {
-      await connection.execute('UPDATE eventos SET inscritos = inscritos - 1 WHERE id = ?', [eventoId]);
+      await connection.execute(
+        'UPDATE eventos SET inscritos = GREATEST(inscritos - 1, 0) WHERE id = ?',
+        [eventoId]
+      );
     }
 
     await connection.commit();
@@ -152,18 +250,36 @@ async function adicionarParticipante(eventoId, emailParticipante, usuarioId) {
   try {
     await connection.beginTransaction();
 
-    // Verifica se é o dono
-    const [evento] = await connection.execute('SELECT id FROM eventos WHERE id = ? AND usuario_id = ?', [eventoId, usuarioId]);
-    if (evento.length === 0) throw new Error('UNAUTHORIZED');
+    const [eventos] = await connection.execute(
+      'SELECT id, usuario_id, capacidade, inscritos FROM eventos WHERE id = ? AND usuario_id = ? FOR UPDATE',
+      [eventoId, usuarioId]
+    );
+    if (eventos.length === 0) throw new Error('UNAUTHORIZED');
 
-    // Busca o usuário pelo email
-    const [usuarios] = await connection.execute('SELECT id FROM usuarios WHERE email = ?', [emailParticipante]);
+    const evento = eventos[0];
+    if (evento.inscritos >= evento.capacidade) {
+      throw new Error('EVENT_FULL');
+    }
+
+    const [usuarios] = await connection.execute(
+      'SELECT id FROM usuarios WHERE email = ?',
+      [emailParticipante]
+    );
     if (usuarios.length === 0) throw new Error('NOT_FOUND');
     const participanteId = usuarios[0].id;
 
-    // Adiciona na tabela inscricoes e atualiza o contador
-    await connection.execute('INSERT INTO inscricoes (usuario_id, evento_id) VALUES (?, ?)', [participanteId, eventoId]);
-    await connection.execute('UPDATE eventos SET inscritos = inscritos + 1 WHERE id = ?', [eventoId]);
+    if (participanteId === usuarioId) {
+      throw new Error('OWNER_CANNOT_SUBSCRIBE');
+    }
+
+    await connection.execute(
+      'INSERT INTO inscricoes (usuario_id, evento_id) VALUES (?, ?)',
+      [participanteId, eventoId]
+    );
+    await connection.execute(
+      'UPDATE eventos SET inscritos = inscritos + 1 WHERE id = ?',
+      [eventoId]
+    );
 
     await connection.commit();
     return { id: participanteId, email: emailParticipante };

@@ -27,29 +27,29 @@ document.getElementById('formCadastro').addEventListener('submit', async (e) => 
     }
 });
 
-
-//ANIMAÇÃO DE ENTRADA
+// ANIMAÇÃO DE ENTRADA
 window.addEventListener('load', () => {
   document.body.classList.add('loaded');
 });
 
 const phoneInput = document.getElementById('phone');
+if (phoneInput) {
+  phoneInput.addEventListener('input', (e) => {
+    let v = e.target.value.replace(/\D/g, '');
 
-phoneInput.addEventListener('input', (e) => {
-  let v = e.target.value.replace(/\D/g, '');
+    if (v.length > 11) v = v.slice(0, 11);
 
-  if (v.length > 11) v = v.slice(0, 11);
+    if (v.length > 6) {
+      v = `(${v.slice(0, 2)}) ${v.slice(2, 7)}-${v.slice(7)}`;
+    } else if (v.length > 2) {
+      v = `(${v.slice(0, 2)}) ${v.slice(2)}`;
+    } else if (v.length > 0) {
+      v = `(${v}`;
+    }
 
-  if (v.length > 6) {
-    v = `(${v.slice(0, 2)}) ${v.slice(2, 7)}-${v.slice(7)}`;
-  } else if (v.length > 2) {
-    v = `(${v.slice(0, 2)}) ${v.slice(2)}`;
-  } else if (v.length > 0) {
-    v = `(${v}`;
-  }
-
-  e.target.value = v;
-});
+    e.target.value = v;
+  });
+}
 
 document.querySelectorAll('button').forEach((btn) => {
   btn.addEventListener('click', function () {

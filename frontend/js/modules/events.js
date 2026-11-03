@@ -7,6 +7,29 @@ import { renderEmptyStateMarkup, openDeleteConfirmModal, cancelEditMode, switchT
 // EVENTS LOGIC
 // ==========================================
 
+const SAFE_UPLOAD_URL_REGEX = /^\/uploads\/[a-zA-Z0-9_/-]+\.(jpg|jpeg|png|webp)$/i;
+const ALLOWED_BANNERS = new Set([
+    'event-card-gradient-1',
+    'event-card-gradient-2',
+    'event-card-gradient-3',
+    'event-card-gradient-4',
+    'event-card-gradient-5'
+]);
+
+function getSafeImageUrl(url) {
+    if (typeof url === 'string' && SAFE_UPLOAD_URL_REGEX.test(url)) {
+        return url;
+    }
+    return null;
+}
+
+function getSafeBannerClass(bannerClass) {
+    if (typeof bannerClass === 'string' && ALLOWED_BANNERS.has(bannerClass)) {
+        return bannerClass;
+    }
+    return 'event-card-gradient-1';
+}
+
 export async function loadEventsFromServer() {
     try {
         const data = await fetchEvents();
@@ -15,7 +38,6 @@ export async function loadEventsFromServer() {
             data: ev.data.split('T')[0], 
             hora: ev.hora ? ev.hora.substring(0, 5) : '00:00'
         }));
-        // Import dynamically to avoid circular dependency loop with ui.js
         const { renderStats } = await import('./ui.js');
         renderStats();
         renderEvents();
@@ -138,7 +160,6 @@ export function renderExploreEvents() {
     if (listExplore) {
         listExplore.innerHTML = '';
         
-        // Aplica o grid baseado no modo de visualização
         if (state.exploreListView) {
             listExplore.classList.remove('sm:grid-cols-2');
             listExplore.classList.add('grid-cols-1');
@@ -158,13 +179,16 @@ export function renderExploreEvents() {
 
 function createEventCardElement(ev, isExploreView) {
     const card = document.createElement('div');
+    const safeImageUrl = getSafeImageUrl(ev.imagem_url);
+    const safeBannerClass = getSafeBannerClass(ev.bannerClass);
+    const safeId = Number(ev.id) || 0;
+    const safeInscritos = Number(ev.inscritos) || 0;
+    const safeCapacidade = Number(ev.capacidade) || 0;
     
     if (isExploreView) {
-        // Glassmorphism Card Style
-        const bgStyle = ev.imagem_url ? `background-image: url('${ev.imagem_url}');` : 'background-color: #00a35c;';
-        const bgClass = ev.imagem_url ? 'bg-cover bg-center' : '';
+        const bgStyle = safeImageUrl ? `background-image: url('${safeImageUrl}');` : 'background-color: #00a35c;';
+        const bgClass = safeImageUrl ? 'bg-cover bg-center' : '';
         
-        // Se estiver no modo lista, aumenta a altura mínima e muda estilo
         const heightStyle = state.exploreListView ? 'min-height: 450px;' : 'min-height: 320px;';
         
         card.className = `relative rounded-3xl overflow-hidden shadow-md transition-all hover:shadow-xl flex flex-col event-card ${bgClass}`;
@@ -175,16 +199,16 @@ function createEventCardElement(ev, isExploreView) {
         if (ev.inscrito) {
             actionsHTML = `
             <div class="flex items-center gap-2 mt-3">
-                <button class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-sm font-bold text-white bg-brand-green/90 hover:bg-brand-green backdrop-blur-md btn-details transition-colors shadow-sm" data-id="${ev.id}">
+                <button class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-sm font-bold text-white bg-brand-green/90 hover:bg-brand-green backdrop-blur-md btn-details transition-colors shadow-sm" data-id="${safeId}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                     Inscrito
                 </button>
-                <button class="w-12 h-[38px] flex shrink-0 items-center justify-center rounded-xl bg-red-500/80 hover:bg-red-500 text-white backdrop-blur-md btn-unsubscribe-card transition-colors shadow-sm" data-id="${ev.id}" title="Cancelar Inscrição">
+                <button class="w-12 h-[38px] flex shrink-0 items-center justify-center rounded-xl bg-red-500/80 hover:bg-red-500 text-white backdrop-blur-md btn-unsubscribe-card transition-colors shadow-sm" data-id="${safeId}" title="Cancelar Inscrição">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </div>`;
         } else {
-            actionsHTML = `<button class="w-full mt-3 flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-sm font-semibold text-brand-dark bg-white/90 hover:bg-white backdrop-blur-md btn-details transition-colors" data-id="${ev.id}">Ver Detalhes</button>`;
+            actionsHTML = `<button class="w-full mt-3 flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-sm font-semibold text-brand-dark bg-white/90 hover:bg-white backdrop-blur-md btn-details transition-colors" data-id="${safeId}">Ver Detalhes</button>`;
         }
 
         card.innerHTML = `
@@ -200,7 +224,7 @@ function createEventCardElement(ev, isExploreView) {
               <!-- Glass Morphism Card Info -->
               <div class="rounded-2xl p-5 w-full text-white shadow-xl" style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);">
                   <div class="flex items-center gap-2 text-xs font-semibold text-white/90 mb-1">
-                      <span>${formatDateString(ev.data)} às ${ev.hora || '00:00'}</span>
+                      <span>${escapeHTML(formatDateString(ev.data))} às ${escapeHTML(ev.hora || '00:00')}</span>
                   </div>
                   <h4 class="text-xl md:text-2xl font-bold mb-1 line-clamp-1 drop-shadow-md">${escapeHTML(ev.nome)}</h4>
                   <p class="text-sm text-white/80 mb-3 ${state.exploreListView ? 'line-clamp-4 text-base' : 'line-clamp-2'}">${escapeHTML(ev.descricao || 'Sem descrição')}</p>
@@ -211,7 +235,7 @@ function createEventCardElement(ev, isExploreView) {
                   </div>
                   <div class="flex items-center gap-2 text-xs text-white/90">
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                      <span>${ev.inscritos} / ${ev.capacidade} Inscritos</span>
+                      <span>${safeInscritos} / ${safeCapacidade} Inscritos</span>
                   </div>
 
                   ${actionsHTML}
@@ -225,29 +249,28 @@ function createEventCardElement(ev, isExploreView) {
             card.querySelector('.btn-unsubscribe-card').addEventListener('click', (e) => {
                 e.stopPropagation();
                 card.querySelector('.btn-unsubscribe-card').innerHTML = '<svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
-                callSubscription(ev.id, 'DELETE');
+                callSubscription(safeId, 'DELETE');
             });
         }
 
     } else {
-        // Normal style for Dashboard/My Events
         card.className = 'bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm border border-gray-100 dark:border-slate-800 transition-all hover:shadow-md flex flex-col event-card';
-        card.dataset.id = ev.id;
+        card.dataset.id = safeId;
 
-        const bannerHTML = ev.imagem_url 
-          ? `<div class="h-32 bg-cover bg-center flex items-start justify-end p-4" style="background-image: url('${ev.imagem_url}');">
-               <span class="inline-block px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full text-xs font-bold text-white shadow-sm">${ev.categoria}</span>
+        const bannerHTML = safeImageUrl 
+          ? `<div class="h-32 bg-cover bg-center flex items-start justify-end p-4" style="background-image: url('${safeImageUrl}');">
+               <span class="inline-block px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full text-xs font-bold text-white shadow-sm">${escapeHTML(ev.categoria || 'Geral')}</span>
              </div>`
-          : `<div class="h-24 p-4 flex items-start justify-end ${ev.bannerClass || 'event-card-gradient-1'}">
-               <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-bold text-white shadow-sm">${ev.categoria}</span>
+          : `<div class="h-24 p-4 flex items-start justify-end ${safeBannerClass}">
+               <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-bold text-white shadow-sm">${escapeHTML(ev.categoria || 'Geral')}</span>
              </div>`;
 
         let actionsHTML = `
             <div class="flex flex-col w-full gap-2">
-              <button class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium text-blue-600 bg-blue-50 btn-manage" data-id="${ev.id}">Gerenciar Inscrições</button>
+              <button class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium text-blue-600 bg-blue-50 btn-manage" data-id="${safeId}">Gerenciar Inscrições</button>
               <div class="flex items-center gap-2 w-full">
-                <button class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium text-brand-dark bg-gray-100 btn-edit" data-id="${ev.id}">Editar</button>
-                <button class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium text-red-600 bg-red-50 btn-delete" data-id="${ev.id}">Excluir</button>
+                <button class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium text-brand-dark bg-gray-100 btn-edit" data-id="${safeId}">Editar</button>
+                <button class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium text-red-600 bg-red-50 btn-delete" data-id="${safeId}">Excluir</button>
               </div>
             </div>
           `;
@@ -256,13 +279,13 @@ function createEventCardElement(ev, isExploreView) {
           ${bannerHTML}
           <div class="p-5 flex-1 flex flex-col">
             <div class="flex items-center gap-2 text-sm font-semibold text-brand-green mb-2">
-              <span>${formatDateString(ev.data)} às ${ev.hora || '00:00'}</span>
+              <span>${escapeHTML(formatDateString(ev.data))} às ${escapeHTML(ev.hora || '00:00')}</span>
             </div>
             <h4 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-2">${escapeHTML(ev.nome)}</h4>
             <p class="text-sm text-gray-500 mb-4 line-clamp-2">${escapeHTML(ev.descricao || 'Sem descrição')}</p>
             <div class="space-y-2 mb-5">
               <div class="flex items-center gap-2 text-sm text-gray-600"><span>${escapeHTML(ev.local)}</span></div>
-              <div class="flex items-center gap-2 text-sm text-gray-600"><span>${ev.inscritos} / ${ev.capacidade} Inscritos</span></div>
+              <div class="flex items-center gap-2 text-sm text-gray-600"><span>${safeInscritos} / ${safeCapacidade} Inscritos</span></div>
             </div>
             <div class="flex flex-col gap-3 pt-4 border-t border-gray-100">
               ${actionsHTML}
@@ -270,9 +293,9 @@ function createEventCardElement(ev, isExploreView) {
           </div>
         `;
 
-        card.querySelector('.btn-edit').addEventListener('click', () => enableEditMode(ev.id));
-        card.querySelector('.btn-delete').addEventListener('click', () => openDeleteConfirmModal(ev.id));
-        card.querySelector('.btn-manage').addEventListener('click', () => openEventDetails(ev.id));
+        card.querySelector('.btn-edit').addEventListener('click', () => enableEditMode(safeId));
+        card.querySelector('.btn-delete').addEventListener('click', () => openDeleteConfirmModal(safeId));
+        card.querySelector('.btn-manage').addEventListener('click', () => openEventDetails(safeId));
     }
     
     return card;
@@ -290,7 +313,7 @@ export function enableEditMode(id) {
     document.getElementById('event-desc').value = ev.descricao || '';
     document.getElementById('event-capacidade').value = ev.capacidade || 100;
     
-    state.selectedBannerClass = ev.bannerClass || 'event-card-gradient-1';
+    state.selectedBannerClass = getSafeBannerClass(ev.bannerClass);
     document.getElementById('form-view-title').textContent = 'Editar Detalhes do Evento';
     document.getElementById('btn-submit-text').textContent = 'Salvar Alterações';
     switchTab('create-event');
@@ -301,7 +324,6 @@ async function callSubscription(eventoId, method) {
         await handleSubscription(eventoId, method);
         showToast(method === 'POST' ? 'Inscrição confirmada!' : 'Inscrição cancelada!', 'success');
         
-        // Se a inscrição foi um sucesso, garantimos que fechamos o modal
         closeEventProductModal();
 
         loadExploreEvents();
@@ -315,11 +337,11 @@ export function openEventProductModal(ev) {
     const modal = document.getElementById('modal-event-details');
     if (!modal) return;
 
-    // Imagem
     const imgPreview = document.getElementById('details-image');
     const imgPlaceholder = document.getElementById('details-image-placeholder');
-    if (ev.imagem_url) {
-        imgPreview.src = ev.imagem_url;
+    const safeImageUrl = getSafeImageUrl(ev.imagem_url);
+    if (safeImageUrl) {
+        imgPreview.src = safeImageUrl;
         imgPreview.classList.remove('hidden');
         imgPlaceholder.classList.add('hidden');
     } else {
@@ -343,7 +365,6 @@ export function openEventProductModal(ev) {
     const btnSub = document.getElementById('btn-details-subscribe');
     btnSub.dataset.id = ev.id;
     
-    // Limpa o evento de clique antigo (clonando e substituindo o elemento)
     const newBtnSub = btnSub.cloneNode(true);
     btnSub.parentNode.replaceChild(newBtnSub, btnSub);
 
@@ -394,7 +415,7 @@ export async function fetchAndRenderParticipants() {
         participantes.forEach(p => {
             const item = document.createElement('div');
             item.className = 'flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border mb-2';
-            item.innerHTML = `<p class="font-bold">${escapeHTML(p.nome)}</p><button class="text-red-500 btn-remove-participant" data-id="${p.id}">X</button>`;
+            item.innerHTML = `<p class="font-bold">${escapeHTML(p.nome)}</p><button class="text-red-500 btn-remove-participant" data-id="${Number(p.id) || 0}">X</button>`;
             item.querySelector('.btn-remove-participant').addEventListener('click', async () => {
                 if(confirm('Remover participante?')) {
                     await removeParticipant(state.eventManageId, p.id);

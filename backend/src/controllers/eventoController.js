@@ -1,5 +1,73 @@
+const fs = require('fs');
+const path = require('path');
 const eventoModel = require('../models/eventoModel');
 const notificacaoModel = require('../models/notificacaoModel');
+
+const ALLOWED_BANNERS = new Set([
+  'event-card-gradient-1',
+  'event-card-gradient-2',
+  'event-card-gradient-3',
+  'event-card-gradient-4',
+  'event-card-gradient-5'
+]);
+
+const SAFE_UPLOAD_URL_REGEX = /^\/uploads\/[a-zA-Z0-9_-]+\.(jpg|jpeg|png|webp)$/i;
+
+function removerImagemEventoSegura(relPath) {
+  if (!relPath || !SAFE_UPLOAD_URL_REGEX.test(relPath)) return;
+  const fullPath = path.join(__dirname, '../../../frontend', relPath);
+  fs.unlink(fullPath, () => {});
+}
+
+function validarDadosEvento(body) {
+  const nome = typeof body.nome === 'string' ? body.nome.trim() : '';
+  const categoria = typeof body.categoria === 'string' ? body.categoria.trim() : '';
+  const local = typeof body.local === 'string' ? body.local.trim() : '';
+  const data = typeof body.data === 'string' ? body.data.trim() : '';
+  const hora = typeof body.hora === 'string' ? body.hora.trim() : '';
+  const descricao = typeof body.descricao === 'string' ? body.descricao.trim() : '';
+  const capacidade = Number(body.capacidade);
+
+  if (!nome || !categoria || !body.capacidade || !data || !hora || !local) {
+    return { erro: 'Preencha todos os campos obrigatórios.' };
+  }
+
+  if (nome.length > 150 || categoria.length > 50 || local.length > 255 || descricao.length > 5000) {
+    return { erro: 'Um ou mais campos excedem o tamanho máximo permitido.' };
+  }
+
+  if (!Number.isInteger(capacidade) || capacidade < 1 || capacidade > 100000) {
+    return { erro: 'A capacidade deve ser um número inteiro entre 1 e 100.000.' };
+  }
+
+  let imagem_url = undefined;
+  if (body.imagem_url !== undefined && body.imagem_url !== null && body.imagem_url !== '') {
+    if (typeof body.imagem_url !== 'string' || !SAFE_UPLOAD_URL_REGEX.test(body.imagem_url)) {
+      return { erro: 'URL de imagem inválida.' };
+    }
+    imagem_url = body.imagem_url;
+  } else if (body.imagem_url === null) {
+    imagem_url = null;
+  }
+
+  const bannerClass = ALLOWED_BANNERS.has(body.bannerClass)
+    ? body.bannerClass
+    : 'event-card-gradient-1';
+
+  return {
+    dados: {
+      nome,
+      categoria,
+      capacidade,
+      data,
+      hora,
+      local,
+      descricao,
+      bannerClass,
+      imagem_url
+    }
+  };
+}
 
 async function listar(req, res) {
   try {
@@ -26,21 +94,32 @@ async function listarExplorar(req, res) {
 async function inscrever(req, res) {
   try {
     const usuarioId = req.usuarioLogado.id;
-    const nomeInscrito = req.usuarioLogado.nome; // Vem do JWT
+    const nomeInscrito = req.usuarioLogado.nome;
     const { id } = req.params;
-    
+
     const resultado = await eventoModel.inscrever(usuarioId, id);
-    
-    // Dispara notificação se sucesso e não for o próprio dono
+
     if (resultado.sucesso && resultado.dono_evento_id && resultado.dono_evento_id !== usuarioId) {
       await notificacaoModel.criar(
-        resultado.dono_evento_id, 
+        resultado.dono_evento_id,
         `${nomeInscrito} acabou de se inscrever no seu evento!`
       );
     }
 
     return res.status(200).json({ mensagem: 'Inscrição realizada com sucesso!' });
   } catch (error) {
+    if (error.message === 'EVENT_NOT_FOUND') {
+      return res.status(404).json({ erro: 'Evento não encontrado.' });
+    }
+    if (error.message === 'OWNER_CANNOT_SUBSCRIBE') {
+      return res.status(400).json({ erro: 'O organizador não pode se inscrever no próprio evento.' });
+    }
+    if (error.message === 'EVENT_FULL') {
+      return res.status(400).json({ erro: 'Este evento já atingiu a capacidade máxima de inscritos.' });
+    }
+    if (error.message === 'ALREADY_SUBSCRIBED') {
+      return res.status(400).json({ erro: 'Você já está inscrito neste evento.' });
+    }
     console.error('Erro ao inscrever-se:', error);
     return res.status(500).json({ erro: 'Erro interno no servidor ao realizar inscrição.' });
   }
@@ -61,15 +140,13 @@ async function cancelarInscricao(req, res) {
 async function criar(req, res) {
   try {
     const usuarioId = req.usuarioLogado.id;
-    const { nome, categoria, capacidade, data, hora, local, descricao, bannerClass, imagem_url, inscritos } = req.body;
+    const validacao = validarDadosEvento(req.body);
 
-    if (!nome || !categoria || !capacidade || !data || !hora || !local) {
-      return res.status(400).json({ erro: 'Preencha todos os campos obrigatórios.' });
+    if (validacao.erro) {
+      return res.status(400).json({ erro: validacao.erro });
     }
 
-    const novoEvento = await eventoModel.criar({
-      nome, categoria, capacidade, data, hora, local, descricao, bannerClass, imagem_url, inscritos
-    }, usuarioId);
+    const novoEvento = await eventoModel.criar(validacao.dados, usuarioId);
 
     return res.status(201).json({
       mensagem: 'Evento criado com sucesso!',
@@ -85,15 +162,18 @@ async function atualizar(req, res) {
   try {
     const usuarioId = req.usuarioLogado.id;
     const { id } = req.params;
-    const dadosEvento = req.body;
+    const validacao = validarDadosEvento(req.body);
 
-    if (!dadosEvento.nome || !dadosEvento.categoria || !dadosEvento.capacidade || !dadosEvento.data || !dadosEvento.hora || !dadosEvento.local) {
-      return res.status(400).json({ erro: 'Preencha todos os campos obrigatórios.' });
+    if (validacao.erro) {
+      return res.status(400).json({ erro: validacao.erro });
     }
 
-    const atualizado = await eventoModel.atualizar(id, dadosEvento, usuarioId);
+    const { atualizado, imagemAnterior } = await eventoModel.atualizar(id, validacao.dados, usuarioId);
 
     if (atualizado) {
+      if (imagemAnterior) {
+        removerImagemEventoSegura(imagemAnterior);
+      }
       return res.status(200).json({ mensagem: 'Evento atualizado com sucesso!' });
     } else {
       return res.status(404).json({ erro: 'Evento não encontrado ou você não tem permissão para editá-lo.' });
@@ -109,9 +189,12 @@ async function excluir(req, res) {
     const usuarioId = req.usuarioLogado.id;
     const { id } = req.params;
 
-    const excluido = await eventoModel.excluir(id, usuarioId);
+    const { excluido, imagemAnterior } = await eventoModel.excluir(id, usuarioId);
 
     if (excluido) {
+      if (imagemAnterior) {
+        removerImagemEventoSegura(imagemAnterior);
+      }
       return res.status(200).json({ mensagem: 'Evento excluído com sucesso!' });
     } else {
       return res.status(404).json({ erro: 'Evento não encontrado ou você não tem permissão para excluí-lo.' });
@@ -129,7 +212,7 @@ async function excluir(req, res) {
 async function listarParticipantes(req, res) {
   try {
     const usuarioId = req.usuarioLogado.id;
-    const { id } = req.params; // ID do evento
+    const { id } = req.params;
     const participantes = await eventoModel.listarParticipantes(id, usuarioId);
     return res.status(200).json(participantes);
   } catch (error) {
@@ -145,7 +228,7 @@ async function removerParticipante(req, res) {
   try {
     const usuarioId = req.usuarioLogado.id;
     const { id, participanteId } = req.params;
-    
+
     await eventoModel.removerParticipante(id, participanteId, usuarioId);
     return res.status(200).json({ mensagem: 'Participante removido com sucesso.' });
   } catch (error) {
@@ -161,7 +244,7 @@ async function adicionarParticipante(req, res) {
   try {
     const usuarioId = req.usuarioLogado.id;
     const { id } = req.params;
-    const { email } = req.body;
+    const email = typeof req.body.email === 'string' ? req.body.email.trim().toLowerCase() : '';
 
     if (!email) {
       return res.status(400).json({ erro: 'O e-mail do participante é obrigatório.' });
@@ -173,8 +256,14 @@ async function adicionarParticipante(req, res) {
     if (error.message === 'UNAUTHORIZED') {
       return res.status(403).json({ erro: 'Você não tem permissão para adicionar participantes neste evento.' });
     }
+    if (error.message === 'EVENT_FULL') {
+      return res.status(400).json({ erro: 'O evento já atingiu a capacidade máxima de participantes.' });
+    }
+    if (error.message === 'OWNER_CANNOT_SUBSCRIBE') {
+      return res.status(400).json({ erro: 'O organizador não pode ser adicionado como participante do próprio evento.' });
+    }
     if (error.message === 'NOT_FOUND') {
-      return res.status(404).json({ erro: 'Nenhum usuário encontrado com este e-mail no sistema.' });
+      return res.status(404).json({ erro: 'Não foi possível adicionar o participante com o e-mail informado.' });
     }
     if (error.message === 'ALREADY_SUBSCRIBED') {
       return res.status(400).json({ erro: 'Este usuário já está inscrito no evento.' });

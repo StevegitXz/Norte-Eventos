@@ -1,4 +1,5 @@
-require('dotenv').config({ path: 'c:\\Users\\estev\\Desktop\\IFAC\\Projetos\\Norte-Eventos\\.env' });
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 const mysql = require('mysql2/promise');
 
 async function migrate() {

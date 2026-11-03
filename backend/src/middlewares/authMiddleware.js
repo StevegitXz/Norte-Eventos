@@ -1,38 +1,49 @@
 const jwt = require('jsonwebtoken');
+const usuarioModel = require('../models/usuarioModel');
 
-function verificarAutenticacao(req, res, next) {
-    let token = null;
+async function verificarAutenticacao(req, res, next) {
+    const token = req.cookies && req.cookies.norte_eventos_token;
 
-    const cookieHeader = req.headers.cookie;
-
-    if (cookieHeader) {
-        const cookieToken = cookieHeader
-            .split('; ')
-            .find(row => row.startsWith('norte_eventos_token='));
-        
-        if (cookieToken) {
-            token = cookieToken.split('=')[1]; 
+    if (!token) {
+        if (req.originalUrl && req.originalUrl.startsWith('/api')) {
+            return res.status(401).json({ erro: 'Não autorizado. Faça login.' });
         }
+        return res.redirect('/login');
     }
 
+    try {
+        const tokenDecodificado = jwt.verify(token, process.env.JWT_SECRET);
+        const usuarioAtivo = await usuarioModel.buscarPorId(tokenDecodificado.id);
 
-if (!token) {
-    if (req.originalUrl && req.originalUrl.startsWith('/api')) {
-        return res.status(401).json({ erro: 'Não autorizado. Faça login.' });
-    }
-    return res.redirect('/login');
-}
+        if (!usuarioAtivo) {
+            res.clearCookie('norte_eventos_token', {
+                httpOnly: true,
+                sameSite: 'lax',
+                secure: process.env.NODE_ENV === 'production'
+            });
+            if (req.originalUrl && req.originalUrl.startsWith('/api')) {
+                return res.status(401).json({ erro: 'Sessão inválida. Faça login novamente.' });
+            }
+            return res.redirect('/login');
+        }
 
-try {
-    const tokenDecodificado = jwt.verify(token, process.env.JWT_SECRET);
-    req.usuarioLogado = tokenDecodificado; 
-    next(); 
-} catch (erro) {
-    if (req.originalUrl && req.originalUrl.startsWith('/api')) {
-        return res.status(401).json({ erro: 'Token inválido ou expirado. Faça login.' });
+        req.usuarioLogado = {
+            id: usuarioAtivo.id,
+            email: usuarioAtivo.email,
+            nome: usuarioAtivo.nome
+        };
+        next();
+    } catch (erro) {
+        res.clearCookie('norte_eventos_token', {
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: process.env.NODE_ENV === 'production'
+        });
+        if (req.originalUrl && req.originalUrl.startsWith('/api')) {
+            return res.status(401).json({ erro: 'Token inválido ou expirado. Faça login.' });
+        }
+        return res.redirect('/login');
     }
-    return res.redirect('/login'); 
-}
 }
 
 module.exports = verificarAutenticacao;

@@ -34,3 +34,6 @@ coverage/
 
 # uploads
 uploads/
+
+# Relatórios locais e documentação interna de auditoria
+relatorio-seguranca/

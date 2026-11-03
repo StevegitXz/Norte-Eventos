@@ -3,65 +3,116 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const path = require('path');
-const jwt = require('jsonwebtoken');
-const verificarAutenticacao = require('./src/middlewares/authMiddleware');
+const fs = require('fs');
+const multer = require('multer');
 const rateLimit = require('express-rate-limit');
+const verificarAutenticacao = require('./src/middlewares/authMiddleware');
 
 const usuarioRouter = require('./src/routers/usuarioRouter');
 const eventoRouter = require('./src/routers/eventoRouter');
 const notificacaoRouter = require('./src/routers/notificacaoRouter');
 
-const app = express();
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
+  console.error('❌ ERRO CRÍTICO: JWT_SECRET ausente ou muito curto (mínimo de 32 caracteres).');
+  process.exit(1);
+}
 
-// Configuração do Rate Limit para rotas de autenticação
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 15, // Limita a 15 requisições por IP a cada 15 minutos
-  message: { erro: 'Muitas tentativas de acesso. Por favor, tente novamente mais tarde.' },
-  standardHeaders: true,
-  legacyHeaders: false,
+const app = express();
+app.disable('x-powered-by');
+
+// Cabeçalhos HTTP de segurança
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('X-XSS-Protection', '0');
+  next();
 });
 
-// Configuração do CORS para permitir cookies cruzados em dev local
+// Configuração restritiva de CORS com lista de origens permitidas
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map(o => o.trim())
+  : ['http://localhost:3000', 'http://127.0.0.1:3000'];
+
 app.use(cors({
   origin: function (origin, callback) {
-    callback(null, true); // Permite qualquer origem em desenvolvimento
+    // Permite requisições da mesma origem (sem header Origin) ou origens na whitelist
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Origem não permitida pela política de CORS.'));
   },
   credentials: true
 }));
 
-app.use(express.json());
+// Limite de tamanho de payload JSON para mitigar DoS
+app.use(express.json({ limit: '10kb' }));
 app.use(cookieParser());
 
-// Servir arquivos estáticos do frontend e uploads
-app.use(express.static(path.join(__dirname, '../frontend')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Rate Limit global para a API e específico para uploads
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 150,
+  message: { erro: 'Muitas requisições deste IP. Tente novamente mais tarde.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
-// Rotas da API (authLimiter aplicado diretamente nas rotas de login/cadastro no router)
+const uploadLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: { erro: 'Limite de uploads atingido. Tente novamente mais tarde.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Servir apenas diretórios públicos estáticos (NÃO expor /pages diretamente)
+app.use('/assets', express.static(path.join(__dirname, '../frontend/assets')));
+app.use('/css', express.static(path.join(__dirname, '../frontend/css')));
+app.use('/js', express.static(path.join(__dirname, '../frontend/js')));
+app.use('/uploads', (req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Content-Security-Policy', "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'");
+  next();
+}, express.static(path.join(__dirname, '../frontend/uploads')));
+
+// Rotas da API
+app.use('/api', apiLimiter);
 app.use('/api/usuarios', usuarioRouter);
 app.use('/api/eventos', verificarAutenticacao, eventoRouter);
 app.use('/api/notificacoes', verificarAutenticacao, notificacaoRouter);
 
-const multer = require('multer');
+// Mapa seguro de MIME types para extensão
+const MIME_TO_EXT = {
+  'image/jpeg': '.jpg',
+  'image/png': '.png',
+  'image/webp': '.webp'
+};
 
-// Configuração do Multer para upload de imagens
+// Configuração do Multer para upload de imagens de eventos
+const uploadDir = path.join(__dirname, '../frontend/uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../frontend/uploads/'));
+    cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
+    const ext = MIME_TO_EXT[file.mimetype] || '.jpg';
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
+    cb(null, uniqueSuffix + ext);
   }
 });
 
-// Filtro de segurança para extensões de arquivo
+// Filtro de segurança para extensões e MIME types de arquivo
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|webp/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype);
+  const allowedExts = /\.(jpeg|jpg|png|webp)$/i;
+  const extnameValid = allowedExts.test(path.extname(file.originalname).toLowerCase());
+  const mimetypeValid = Boolean(MIME_TO_EXT[file.mimetype]);
 
-  if (extname && mimetype) {
+  if (extnameValid && mimetypeValid) {
     return cb(null, true);
   } else {
     cb(new Error('Apenas imagens (jpeg, jpg, png, webp) são permitidas!'));
@@ -75,13 +126,11 @@ const upload = multer({
 });
 
 // Rota de Upload
-app.post('/api/upload', verificarAutenticacao, (req, res) => {
+app.post('/api/upload', verificarAutenticacao, uploadLimiter, (req, res) => {
   upload.single('imagem')(req, res, function (err) {
     if (err instanceof multer.MulterError) {
-      // Erro do Multer (ex: tamanho do arquivo excedido)
       return res.status(400).json({ erro: `Erro no upload: ${err.message}` });
     } else if (err) {
-      // Erro personalizado (ex: tipo de arquivo inválido)
       return res.status(400).json({ erro: err.message });
     }
 
@@ -89,15 +138,12 @@ app.post('/api/upload', verificarAutenticacao, (req, res) => {
       return res.status(400).json({ erro: 'Nenhuma imagem válida foi enviada.' });
     }
     
-    // Retorna o caminho relativo que será salvo no banco e lido pelo frontend
     res.status(200).json({ url: `/uploads/${req.file.filename}` });
   });
 });
 
 // Rota da página Inicial
 app.get(['/', '/home'], (req, res) => {
-    // Exibe a Home para todos. 
-    // O cookie continua no navegador, então se o usuário voltar para o /dashboard, ainda estará logado.
     res.sendFile(path.join(__dirname, '../frontend/pages/Home.html'));
 });
 
@@ -115,7 +161,6 @@ app.get('/cadastro', (req, res) => {
 app.get('/dashboard', verificarAutenticacao, (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/pages/dashboard.html'));
 });
-
 
 const PORT = process.env.PORT || 3000; 
 

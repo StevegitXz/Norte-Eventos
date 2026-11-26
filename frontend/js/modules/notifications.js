@@ -31,19 +31,19 @@ function renderNotifications(notifs) {
     if (notifList) {
         notifList.innerHTML = '';
         if (notifs.length === 0) {
-            notifList.innerHTML = '<div class="text-center text-sm text-gray-500 p-4">Nenhuma notificação nova.</div>';
+            notifList.innerHTML = '<div class="text-center text-sm text-stone-500 dark:text-gray-400 p-4">Nenhuma notificação nova.</div>';
         } else {
             notifs.forEach(n => {
                 const div = document.createElement('div');
-                div.className = `p-3 text-sm rounded-lg border-b border-gray-100 dark:border-slate-700/50 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors ${n.lida ? 'opacity-60' : 'bg-brand-green/5 dark:bg-brand-green/10'}`;
+                div.className = `p-3 text-sm rounded-xl border-b border-stone-100 dark:border-white/5 cursor-pointer hover:bg-stone-50 dark:hover:bg-white/5 transition-colors ${n.lida ? 'opacity-60' : 'bg-brand-green/5 dark:bg-brand-emerald/10'}`;
                 div.innerHTML = `
                     <div class="flex items-start gap-3">
-                        <div class="mt-0.5 text-brand-green">
+                        <div class="mt-0.5 text-brand-green dark:text-brand-emerald shrink-0">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                         </div>
                         <div>
-                            <p class="text-gray-800 dark:text-gray-200 leading-snug">${escapeHTML(n.mensagem)}</p>
-                            <p class="text-xs text-gray-400 mt-1">${escapeHTML(formatDateString(n.criado_em.split('T')[0]))}</p>
+                            <p class="text-brand-dark dark:text-gray-200 leading-snug">${escapeHTML(n.mensagem)}</p>
+                            <p class="text-xs text-stone-400 dark:text-gray-500 mt-1">${escapeHTML(formatDateString(n.criado_em.split('T')[0]))}</p>
                         </div>
                     </div>
                 `;
@@ -63,18 +63,18 @@ function renderNotifications(notifs) {
     if (exploreNotifList) {
         exploreNotifList.innerHTML = '';
         if (notifs.length === 0) {
-            exploreNotifList.innerHTML = '<p class="text-sm text-white/80">Nenhuma notificação recente.</p>';
+            exploreNotifList.innerHTML = '<p class="text-sm text-stone-500 dark:text-gray-400">Nenhuma notificação recente.</p>';
         } else {
             notifs.forEach(n => {
                 const div = document.createElement('div');
-                div.className = `p-2 text-sm rounded-lg border-b border-white/10 cursor-pointer hover:bg-white/10 transition-colors ${n.lida ? 'opacity-60' : ''}`;
+                div.className = `p-2.5 text-sm rounded-xl border-b border-stone-100 dark:border-white/5 cursor-pointer hover:bg-stone-50 dark:hover:bg-white/5 transition-colors ${n.lida ? 'opacity-60' : 'bg-brand-green/[0.04] dark:bg-brand-emerald/10'}`;
                 div.innerHTML = `
-                    <div class="flex items-start gap-2">
-                        <div class="mt-0.5 text-white/80">
+                    <div class="flex items-start gap-2.5">
+                        <div class="mt-0.5 text-brand-green dark:text-brand-emerald shrink-0">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                         </div>
                         <div>
-                            <p class="text-white leading-snug">${escapeHTML(n.mensagem)}</p>
+                            <p class="text-stone-700 dark:text-gray-200 leading-snug">${escapeHTML(n.mensagem)}</p>
                         </div>
                     </div>
                 `;

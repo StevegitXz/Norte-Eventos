@@ -79,13 +79,13 @@ export function renderStats() {
 
 export function renderEmptyStateMarkup(title = 'Nenhum evento localizado', desc = 'Você ainda não tem eventos criados nesta categoria ou correspondentes à sua busca.') {
     return `
-      <div class="empty-state form-full-width col-span-1 md:col-span-2 xl:col-span-3 text-center py-12">
-        <div class="empty-state-icon flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-slate-800 text-gray-400 rounded-full">
-          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+      <div class="empty-state form-full-width col-span-1 md:col-span-2 xl:col-span-3 text-center py-14 px-6 border border-dashed border-stone-300 dark:border-white/15 rounded-3xl bg-white/60 dark:bg-[#121A16]/60">
+        <div class="empty-state-icon flex items-center justify-center w-14 h-14 mx-auto mb-4 bg-brand-green/10 dark:bg-brand-emerald/15 text-brand-green dark:text-brand-emerald rounded-2xl">
+          <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
         </div>
-        <h4 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">${title}</h4>
-        <p class="text-sm text-gray-500 mb-4">${desc}</p>
-        <button class="btn-primary inline-flex btn-go-create px-6 py-2">Criar Novo Evento</button>
+        <h4 class="font-display text-lg font-bold text-brand-dark dark:text-white mb-1.5">${escapeHTML(title)}</h4>
+        <p class="text-sm text-stone-500 dark:text-gray-400 max-w-md mx-auto mb-5 leading-relaxed">${escapeHTML(desc)}</p>
+        <button type="button" class="btn-primary inline-flex btn-go-create px-6 py-2.5">Criar Novo Evento</button>
       </div>
     `;
 }
@@ -108,8 +108,14 @@ export function cancelEditMode() {
     if (eventForm) eventForm.reset();
     
     const bannerOptions = document.querySelectorAll('.banner-option');
-    bannerOptions.forEach(o => o.classList.remove('selected'));
-    if (bannerOptions[0]) bannerOptions[0].classList.add('selected');
+    bannerOptions.forEach(o => {
+        o.classList.remove('selected');
+        o.setAttribute('aria-checked', 'false');
+    });
+    if (bannerOptions[0]) {
+        bannerOptions[0].classList.add('selected');
+        bannerOptions[0].setAttribute('aria-checked', 'true');
+    }
     state.selectedBannerClass = 'event-card-gradient-1';
 
     const titleEl = document.getElementById('form-view-title');
@@ -159,8 +165,12 @@ export function setupUIBindings() {
     const bannerOptions = document.querySelectorAll('.banner-option');
     bannerOptions.forEach(opt => {
         opt.addEventListener('click', () => {
-            bannerOptions.forEach(o => o.classList.remove('selected'));
+            bannerOptions.forEach(o => {
+                o.classList.remove('selected');
+                o.setAttribute('aria-checked', 'false');
+            });
             opt.classList.add('selected');
+            opt.setAttribute('aria-checked', 'true');
             state.selectedBannerClass = opt.dataset.gradient;
         });
     });
@@ -236,11 +246,11 @@ export function setupUIBindings() {
     exploreFilterBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             exploreFilterBtns.forEach(b => {
-                b.classList.remove('active', 'bg-brand-green', 'text-white');
-                b.classList.add('bg-gray-100', 'dark:bg-slate-800', 'text-gray-600', 'dark:text-gray-300');
+                b.classList.remove('active', 'bg-brand-green', 'text-white', 'border-brand-green');
+                b.classList.add('bg-white', 'dark:bg-[#121A16]', 'text-stone-600', 'dark:text-gray-300', 'border-stone-200/80', 'dark:border-white/10');
             });
-            btn.classList.add('active', 'bg-brand-green', 'text-white');
-            btn.classList.remove('bg-gray-100', 'dark:bg-slate-800', 'text-gray-600', 'dark:text-gray-300');
+            btn.classList.add('active', 'bg-brand-green', 'text-white', 'border-brand-green');
+            btn.classList.remove('bg-white', 'dark:bg-[#121A16]', 'text-stone-600', 'dark:text-gray-300', 'border-stone-200/80', 'dark:border-white/10');
             state.exploreFilterCategory = btn.dataset.category;
             renderExploreEvents();
         });

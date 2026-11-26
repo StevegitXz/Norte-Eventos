@@ -1,0 +1,126 @@
+{
+  "title": "Wiki Norte Eventos",
+  "version": "1.0.0",
+  "defaultSlug": "visao-geral",
+  "categories": [
+    {
+      "id": "introducao",
+      "label": "Comece Aqui",
+      "audience": "todos",
+      "pages": [
+        {
+          "slug": "visao-geral",
+          "title": "Visão Geral do Sistema",
+          "summary": "O que é o Norte Eventos, perfis de acesso, principais recursos e equipe do projeto.",
+          "file": "01-visao-geral.md",
+          "audience": "todos"
+        }
+      ]
+    },
+    {
+      "id": "usuario",
+      "label": "Guia do Usuário",
+      "audience": "usuario",
+      "pages": [
+        {
+          "slug": "usuario/primeiros-passos",
+          "title": "Cadastro e Login",
+          "summary": "Como criar sua conta, acessar o painel e encerrar a sessão com segurança.",
+          "file": "usuario/01-primeiros-passos.md",
+          "audience": "usuario"
+        },
+        {
+          "slug": "usuario/explorar-e-inscrever",
+          "title": "Explorar Eventos e Inscrições",
+          "summary": "Como pesquisar eventos, filtrar por categoria, se inscrever e cancelar vagas.",
+          "file": "usuario/02-explorar-e-inscrever.md",
+          "audience": "usuario"
+        },
+        {
+          "slug": "usuario/notificacoes-e-perfil",
+          "title": "Notificações e Perfil",
+          "summary": "Acompanhe avisos em tempo real, atualize foto, dados pessoais, senha ou exclua sua conta.",
+          "file": "usuario/03-notificacoes-e-perfil.md",
+          "audience": "usuario"
+        }
+      ]
+    },
+    {
+      "id": "organizador",
+      "label": "Guia do Organizador",
+      "audience": "organizador",
+      "pages": [
+        {
+          "slug": "organizador/criar-e-editar-eventos",
+          "title": "Criar e Editar Eventos",
+          "summary": "Passo a passo para publicar novos eventos, subir banners personalizados e editar informações.",
+          "file": "organizador/01-criar-e-editar-eventos.md",
+          "audience": "organizador"
+        },
+        {
+          "slug": "organizador/gerenciar-participantes",
+          "title": "Gestão de Participantes",
+          "summary": "Visualize inscritos, adicione participantes manualmente por e-mail e controle a capacidade.",
+          "file": "organizador/02-gerenciar-participantes.md",
+          "audience": "organizador"
+        }
+      ]
+    },
+    {
+      "id": "desenvolvedor",
+      "label": "Guia do Desenvolvedor",
+      "audience": "dev",
+      "pages": [
+        {
+          "slug": "dev/arquitetura-e-pastas",
+          "title": "Arquitetura MVC e Pastas",
+          "summary": "Estrutura do projeto, fluxo de requisições Express e organização entre backend e frontend.",
+          "file": "dev/01-arquitetura-e-pastas.md",
+          "audience": "dev"
+        },
+        {
+          "slug": "dev/instalacao-e-docker",
+          "title": "Instalação e Docker",
+          "summary": "Como rodar o sistema com Docker Compose ou localmente com Node.js e MySQL.",
+          "file": "dev/02-instalacao-e-docker.md",
+          "audience": "dev"
+        },
+        {
+          "slug": "dev/banco-de-dados",
+          "title": "Banco de Dados (MySQL)",
+          "summary": "Modelagem DER, estrutura das 4 tabelas, relacionamentos e inicialização automática.",
+          "file": "dev/03-banco-de-dados.md",
+          "audience": "dev"
+        },
+        {
+          "slug": "dev/referencia-api",
+          "title": "Referência da API REST",
+          "summary": "Documentação completa de endpoints, payloads, cookies JWT e limites de taxa.",
+          "file": "dev/04-referencia-api.md",
+          "audience": "dev"
+        },
+        {
+          "slug": "dev/seguranca-e-acessibilidade",
+          "title": "Segurança, Design e Acessibilidade",
+          "summary": "Controles de segurança (JWT, bcrypt, CORS, rate limit), Tailwind v4 e recursos a11y.",
+          "file": "dev/05-seguranca-e-acessibilidade.md",
+          "audience": "dev"
+        }
+      ]
+    },
+    {
+      "id": "suporte",
+      "label": "Ajuda & Suporte",
+      "audience": "todos",
+      "pages": [
+        {
+          "slug": "faq",
+          "title": "Perguntas Frequentes (FAQ)",
+          "summary": "Dúvidas rápidas e solução de problemas comuns para usuários e programadores.",
+          "file": "faq.md",
+          "audience": "todos"
+        }
+      ]
+    }
+  ]
+}

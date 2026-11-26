@@ -11,6 +11,7 @@ const verificarAutenticacao = require('./src/middlewares/authMiddleware');
 const usuarioRouter = require('./src/routers/usuarioRouter');
 const eventoRouter = require('./src/routers/eventoRouter');
 const notificacaoRouter = require('./src/routers/notificacaoRouter');
+const wikiRouter = require('./src/routers/wikiRouter');
 
 if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
   console.error('❌ ERRO CRÍTICO: JWT_SECRET ausente ou muito curto (mínimo de 32 caracteres).');
@@ -81,6 +82,7 @@ app.use('/api', apiLimiter);
 app.use('/api/usuarios', usuarioRouter);
 app.use('/api/eventos', verificarAutenticacao, eventoRouter);
 app.use('/api/notificacoes', verificarAutenticacao, notificacaoRouter);
+app.use('/api/wiki', wikiRouter);
 
 // Mapa seguro de MIME types para extensão
 const MIME_TO_EXT = {
@@ -160,6 +162,11 @@ app.get('/cadastro', (req, res) => {
 // Rota protegida da Dashboard 
 app.get('/dashboard', verificarAutenticacao, (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/pages/dashboard.html'));
+});
+
+// Rota pública da Wiki / Central de Documentação (suporta subrotas SPA)
+app.get(['/wiki', '/wiki/*slug'], (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/pages/wiki.html'));
 });
 
 const PORT = process.env.PORT || 3000; 

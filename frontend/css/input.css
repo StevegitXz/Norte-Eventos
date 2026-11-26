@@ -6,14 +6,19 @@
 @source "../../frontend/**/*.js";
 
 @theme {
-  --color-brand-green: #6ed44a;
-  --color-brand-dark: #0d1f2d;
-  --color-brand-darker: #09151e;
-  --color-brand-light: #f8fafc;
-  --color-brand-muted: #a0aec0;
-  
-  --font-sans: "Inter", sans-serif;
-  --font-display: "Montserrat", sans-serif;
+  --color-brand-green: #0F5338;
+  --color-brand-green-light: #167952;
+  --color-brand-emerald: #10B981;
+  --color-brand-amber: #D97706;
+  --color-brand-amber-light: #FEF3C7;
+  --color-brand-dark: #0B1914;
+  --color-brand-darker: #07100D;
+  --color-brand-light: #F7F7F4;
+  --color-brand-surface: #FFFFFF;
+  --color-brand-muted: #64748B;
+
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: "Outfit", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 @layer base {
@@ -22,7 +27,13 @@
     color: var(--color-brand-dark);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+
+  body ::selection {
+    background-color: rgb(16 185 129 / 0.2);
+  }
+
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     font-weight: 700;
@@ -32,18 +43,364 @@
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-brand-green hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-green transition-colors duration-200;
+    @apply inline-flex items-center justify-center rounded-xl px-5 py-2.5 text-sm font-semibold text-white bg-brand-green hover:bg-brand-green-light active:scale-[0.98] shadow-[0_2px_10px_rgba(15,83,56,0.18)] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-green transition-all duration-200 cursor-pointer;
   }
-  
+
   .btn-secondary {
-    @apply inline-flex items-center justify-center px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-green transition-colors duration-200;
+    @apply inline-flex items-center justify-center rounded-xl px-5 py-2.5 text-sm font-semibold border border-stone-200/80 dark:border-emerald-950/60 bg-white dark:bg-[#121A16] text-brand-dark dark:text-gray-100 hover:bg-stone-50 dark:hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-green transition-all duration-200 cursor-pointer;
+  }
+
+  .btn-amber {
+    @apply inline-flex items-center justify-center rounded-xl px-5 py-2.5 text-sm font-semibold bg-brand-amber text-white hover:bg-amber-700 active:scale-[0.98] shadow-[0_2px_10px_rgba(217,119,6,0.2)] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-amber transition-all duration-200 cursor-pointer;
   }
 
   .input-field {
-    @apply block w-full px-4 py-3 rounded-lg border-gray-300 shadow-sm focus:ring-brand-green focus:border-brand-green sm:text-sm border transition-colors bg-white outline-none;
+    @apply block w-full rounded-xl border border-stone-200 dark:border-white/10 bg-stone-50/50 dark:bg-[#0B110E]/60 px-4 py-3 text-sm text-brand-dark dark:text-white placeholder:text-stone-400 dark:placeholder:text-gray-500 focus:bg-white dark:focus:bg-[#121A16] focus:border-brand-green dark:focus:border-brand-emerald focus:ring-3 focus:ring-brand-green/15 outline-none transition-all;
   }
-  
-  .card-gradient-1 { @apply bg-gradient-to-r from-teal-500 to-emerald-500 text-white; }
-  .card-gradient-2 { @apply bg-gradient-to-r from-blue-600 to-indigo-600 text-white; }
-  .card-gradient-3 { @apply bg-gradient-to-r from-purple-600 to-pink-500 text-white; }
+
+  .bento-card {
+    @apply bg-white dark:bg-[#111915] rounded-2xl border border-stone-200/80 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition-all duration-200;
+  }
+
+  .event-card-gradient-1,
+  .card-gradient-1 {
+    background-image: linear-gradient(135deg, #064e3b 0%, #059669 100%);
+    color: white;
+  }
+
+  .event-card-gradient-2,
+  .card-gradient-2 {
+    background-image: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0284c7 100%);
+    color: white;
+  }
+
+  .event-card-gradient-3,
+  .card-gradient-3 {
+    background-image: linear-gradient(135deg, #78350f 0%, #d97706 50%, #f59e0b 100%);
+    color: white;
+  }
+
+  .event-card-gradient-4 {
+    background-image: linear-gradient(135deg, #4c1d95 0%, #9d174d 50%, #e11d48 100%);
+    color: white;
+  }
+
+  .event-card-gradient-5 {
+    background-image: linear-gradient(135deg, #134e4a 0%, #0d9488 50%, #2dd4bf 100%);
+    color: white;
+  }
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.25);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(15, 83, 56, 0.45);
+}
+
+.card-progressive-blur {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  mask-image: linear-gradient(to top, black 0%, black 55%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, black 0%, black 55%, transparent 100%);
+}
+
+.card-scrim-gradient {
+  background: linear-gradient(
+    to top,
+    rgba(8, 17, 13, 0.95) 0%,
+    rgba(12, 26, 19, 0.80) 42%,
+    rgba(12, 26, 19, 0.28) 68%,
+    transparent 100%
+  );
+}
+
+/* =========================================
+   WIKI / CENTRAL DE DOCUMENTAÇÃO (PROSE)
+   ========================================= */
+.wiki-prose {
+  color: #1c2823;
+  font-size: 0.965rem;
+  line-height: 1.78;
+}
+
+.dark .wiki-prose {
+  color: #d6dfd9;
+}
+
+.wiki-prose h1 {
+  font-size: clamp(1.85rem, 3vw, 2.35rem);
+  line-height: 1.15;
+  color: #0b1914;
+  margin-bottom: 1rem;
+}
+
+.dark .wiki-prose h1 {
+  color: #ffffff;
+}
+
+.wiki-prose h2 {
+  font-size: 1.4rem;
+  line-height: 1.3;
+  color: #0b1914;
+  margin-top: 2.25rem;
+  margin-bottom: 0.9rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(28, 25, 23, 0.09);
+  scroll-margin-top: 6rem;
+}
+
+.dark .wiki-prose h2 {
+  color: #f4f7f5;
+  border-bottom-color: rgba(255, 255, 255, 0.09);
+}
+
+.wiki-prose h3 {
+  font-size: 1.12rem;
+  line-height: 1.4;
+  color: #0f5338;
+  margin-top: 1.65rem;
+  margin-bottom: 0.65rem;
+  scroll-margin-top: 6rem;
+}
+
+.dark .wiki-prose h3 {
+  color: #34d399;
+}
+
+.wiki-prose p {
+  margin-bottom: 1rem;
+}
+
+.wiki-prose ul,
+.wiki-prose ol {
+  margin-bottom: 1.15rem;
+  padding-left: 1.45rem;
+}
+
+.wiki-prose ul {
+  list-style-type: disc;
+}
+
+.wiki-prose ol {
+  list-style-type: decimal;
+}
+
+.wiki-prose li {
+  margin-bottom: 0.45rem;
+}
+
+.wiki-prose li::marker {
+  color: #0f5338;
+  font-weight: 700;
+}
+
+.dark .wiki-prose li::marker {
+  color: #10b981;
+}
+
+.wiki-prose hr {
+  border: 0;
+  border-top: 1px solid rgba(28, 25, 23, 0.1);
+  margin: 2rem 0;
+}
+
+.dark .wiki-prose hr {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+.wiki-prose a {
+  color: #0f5338;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(15, 83, 56, 0.35);
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+
+.wiki-prose a:hover {
+  color: #167952;
+  text-decoration-color: #167952;
+}
+
+.dark .wiki-prose a {
+  color: #34d399;
+  text-decoration-color: rgba(52, 211, 153, 0.35);
+}
+
+.wiki-prose :not(pre) > code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.84em;
+  background: rgba(15, 83, 56, 0.08);
+  color: #0f5338;
+  padding: 0.14rem 0.42rem;
+  border-radius: 0.45rem;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.dark .wiki-prose :not(pre) > code {
+  background: rgba(16, 185, 129, 0.14);
+  color: #6ee7b7;
+}
+
+.wiki-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  margin: 1.25rem 0 1.5rem;
+  border: 1px solid rgba(28, 25, 23, 0.1);
+  border-radius: 0.9rem;
+  background: #ffffff;
+}
+
+.dark .wiki-table-wrap {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: #111915;
+}
+
+.wiki-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  text-align: left;
+}
+
+.wiki-prose th {
+  background: #f4f5f0;
+  color: #0b1914;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(28, 25, 23, 0.1);
+  white-space: nowrap;
+}
+
+.dark .wiki-prose th {
+  background: rgba(255, 255, 255, 0.04);
+  color: #f4f7f5;
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.wiki-prose td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(28, 25, 23, 0.06);
+  vertical-align: top;
+}
+
+.dark .wiki-prose td {
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+.wiki-prose tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.wiki-code-block {
+  margin: 1.25rem 0 1.5rem;
+  border-radius: 0.95rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0c1712;
+  color: #e6f2ec;
+  box-shadow: 0 6px 20px rgba(7, 16, 13, 0.12);
+}
+
+.wiki-code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.95rem;
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+}
+
+.wiki-code-block pre {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.84rem;
+  line-height: 1.65;
+}
+
+.wiki-callout {
+  margin: 1.25rem 0 1.5rem;
+  padding: 1rem 1.15rem;
+  border-radius: 0.95rem;
+  border-left: 4px solid #0f5338;
+  background: rgba(15, 83, 56, 0.06);
+}
+
+.dark .wiki-callout {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.wiki-callout-tip {
+  border-left-color: #10b981;
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.wiki-callout-important {
+  border-left-color: #0f5338;
+  background: rgba(15, 83, 56, 0.08);
+}
+
+.wiki-callout-warning {
+  border-left-color: #d97706;
+  background: rgba(217, 119, 6, 0.1);
+}
+
+.dark .wiki-callout-warning {
+  background: rgba(217, 119, 6, 0.14);
+}
+
+.wiki-callout-title {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.35rem;
+}
+
+.wiki-callout p:last-child {
+  margin-bottom: 0;
+}
+
+.wiki-mermaid {
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(28, 25, 23, 0.09);
+  background: #ffffff;
+  overflow-x: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.dark .wiki-mermaid {
+  background: #111915;
+  border-color: rgba(255, 255, 255, 0.1);
 }

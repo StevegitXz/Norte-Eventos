@@ -4,124 +4,140 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Norte Eventos — Cadastro</title>
-  
+
   <meta name="description" content="Crie sua conta na Norte Eventos para explorar e vivenciar as melhores experiências e eventos da região." />
   <meta name="robots" content="index, follow" />
-  
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
-  
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+
   <link rel="stylesheet" href="../css/tailwind.css"/>
-  
+
   <style>
     .hero-bg { transition: transform 8s ease; }
     body.loaded .hero-bg { transform: scale(1.04); }
-    
+
     .hero-tagline {
       opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.8s 0.4s ease, transform 0.8s 0.4s ease;
+      transform: translateY(18px);
+      transition: opacity 0.8s 0.3s ease, transform 0.8s 0.3s ease;
     }
     body.loaded .hero-tagline { opacity: 1; transform: translateY(0); }
-    
+
     .form-wrap {
       opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.7s 0.2s ease, transform 0.7s 0.2s ease;
+      transform: translateY(20px);
+      transition: opacity 0.65s 0.15s ease, transform 0.65s 0.15s ease;
     }
     body.loaded .form-wrap { opacity: 1; transform: translateY(0); }
-    
-    .radial-bg::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at 80% 20%, rgba(255, 255, 255, 0.12) 0%, transparent 60%);
-      pointer-events: none;
-    }
   </style>
 </head>
-<body class="flex flex-col md:flex-row min-h-screen overflow-x-hidden font-sans bg-[#5dce3a]">
+<body class="flex flex-col md:flex-row min-h-screen overflow-x-hidden font-sans bg-brand-light text-brand-dark">
 
-  <aside class="relative flex-none w-full md:w-[58%] h-[35vh] md:h-screen overflow-hidden" aria-label="Apresentação Visual">
-    <a href="/" class="absolute top-7 left-7 z-20">
-      <img src="../assets/icons/Logo.png" alt="Norte Eventos Logo" class="h-[72px] w-auto drop-shadow-md" />
-    </a>
-    
-    <img class="hero-bg absolute inset-0 w-full h-full object-cover brightness-[0.88]"
-      src="../assets/img/fundo-log-cad.jpg"
-      alt="Natureza amazônica exuberante com floresta e rios ao entardecer"
-      fetchpriority="high"
-    />
+  <!-- COLUNA VISUAL ESQUERDA -->
+  <aside class="relative flex-none w-full md:w-[52%] lg:w-[55%] h-[34vh] md:h-screen md:p-4" aria-label="Apresentação Visual">
+    <div class="relative w-full h-full md:rounded-3xl overflow-hidden shadow-xl">
+      <a href="/" class="absolute top-6 left-6 z-20 inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-black/35 backdrop-blur-md border border-white/15 hover:bg-black/50 transition-colors">
+        <img src="../assets/icons/Logo.png" alt="Logotipo Norte Eventos" class="h-9 sm:h-11 w-auto" />
+      </a>
 
-    <div class="hero-tagline absolute bottom-8 md:bottom-11 left-6 md:left-10 z-20">
-      <h2 class="font-display font-black text-white text-2xl md:text-[clamp(1.6rem,3.2vw,2.8rem)] leading-[1.1] uppercase drop-shadow-lg">
-        SEU PRÓXIMO EVENTO<span class="text-brand-green block">COMEÇA AQUI!</span>
-      </h2>
+      <img class="hero-bg absolute inset-0 w-full h-full object-cover brightness-[0.86]"
+        src="../assets/img/fundo-log-cad.jpg"
+        alt="Natureza amazônica exuberante com floresta e rios ao entardecer"
+        fetchpriority="high"
+      />
+
+      <!-- Overlay gradiente editorial -->
+      <div class="absolute inset-0 bg-gradient-to-t from-[#07100D]/90 via-[#0B1914]/45 to-[#07100D]/20 z-10"></div>
+
+      <div class="hero-tagline absolute bottom-6 sm:bottom-10 left-6 sm:left-10 right-6 z-20">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 backdrop-blur-md border border-amber-300/30 text-amber-300 text-xs font-bold uppercase tracking-wider mb-3">
+          Região Norte • Brasil
+        </span>
+        <h2 class="font-display font-extrabold text-white text-2xl sm:text-3xl lg:text-4xl leading-[1.12] tracking-tight max-w-lg">
+          Seu próximo evento <span class="text-brand-emerald">começa aqui.</span>
+        </h2>
+        <p class="hidden sm:block text-sm text-stone-300 mt-2.5 max-w-md">
+          Publique experiências em minutos, convide participantes e acompanhe tudo em um painel minimalista e completo.
+        </p>
+      </div>
     </div>
   </aside>
 
-  <main class="radial-bg relative flex-1 flex flex-col items-center justify-center p-6 md:p-12 overflow-hidden bg-[#5dce3a]">
-    
-    <form id="formCadastro" class="form-wrap w-full max-w-[420px] relative z-10" method="POST" action="#">
-      <h1 class="font-display font-black text-white text-[clamp(2rem,4vw,3.2rem)] uppercase leading-none text-center mb-2.5 tracking-tight">FAÇA SEU<br>CADASTRO</h1>
-      <p class="text-center text-[0.88rem] font-semibold text-white/90 mb-5 tracking-wide">Crie sua conta informando seus dados</p>
+  <!-- COLUNA DO FORMULÁRIO DIREITA -->
+  <main class="relative flex-1 flex flex-col items-center justify-center px-6 py-10 sm:p-12 bg-brand-light">
 
-      <!-- Grupo de Input: Nome Completo -->
-      <div class="relative mb-3 group">
-        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/80 pointer-events-none z-10" aria-hidden="true">
+    <form id="formCadastro" class="form-wrap w-full max-w-[420px] relative z-10" method="POST" action="#">
+      <a href="/" class="inline-flex items-center gap-1.5 text-xs font-semibold text-stone-500 hover:text-brand-green transition-colors mb-6">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Voltar para o início
+      </a>
+
+      <div class="mb-6">
+        <span class="inline-block text-xs font-bold uppercase tracking-wider text-brand-amber mb-1.5">Nova Conta</span>
+        <h1 class="font-display font-extrabold text-brand-dark text-3xl sm:text-4xl leading-tight tracking-tight">Crie sua conta</h1>
+        <p class="text-sm text-stone-500 mt-1.5">Preencha seus dados para começar a participar e organizar.</p>
+      </div>
+
+      <!-- Nome Completo (Floating Label) -->
+      <div class="relative mb-3.5 group">
+        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 group-focus-within:text-brand-green transition-colors pointer-events-none z-10" aria-hidden="true">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
             <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
           </svg>
         </span>
-        <input type="text" id="nome" name="nome" class="peer w-full bg-white/20 border-[1.5px] border-white/30 rounded-[10px] pt-[22px] pb-[6px] pr-[18px] pl-[44px] font-sans text-[0.95rem] text-white outline-none transition-all focus:bg-white/25 focus:border-white/70 focus:ring-[3px] focus:ring-white/15 placeholder-transparent" placeholder="Nome completo" required />
-        <label for="nome" class="absolute left-[44px] top-3.5 text-white/75 text-[0.95rem] transition-all peer-focus:-translate-y-2.5 peer-focus:text-[0.7rem] peer-focus:text-white/90 peer-[:not(:placeholder-shown)]:-translate-y-2.5 peer-[:not(:placeholder-shown)]:text-[0.7rem] peer-[:not(:placeholder-shown)]:text-white/90 cursor-text pointer-events-none font-medium">Nome completo</label>
+        <input type="text" id="nome" name="nome" class="peer w-full bg-white border border-stone-200/90 rounded-xl pt-[22px] pb-[7px] pr-4 pl-[44px] font-sans text-sm text-brand-dark outline-none shadow-2xs focus-visible:ring-2 focus-visible:ring-brand-green focus-visible:ring-offset-2 transition-all focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 placeholder-transparent" placeholder="Nome completo" required />
+        <label for="nome" class="absolute left-[44px] top-3.5 text-stone-500 text-sm transition-all peer-focus:-translate-y-2.5 peer-focus:text-[0.7rem] peer-focus:text-brand-green peer-[:not(:placeholder-shown)]:-translate-y-2.5 peer-[:not(:placeholder-shown)]:text-[0.7rem] peer-[:not(:placeholder-shown)]:text-stone-500 cursor-text pointer-events-none font-medium">Nome completo</label>
       </div>
 
-      <!-- Grupo de Input: E-mail -->
-      <div class="relative mb-3 group">
-        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/80 pointer-events-none z-10" aria-hidden="true">
+      <!-- E-mail (Floating Label) -->
+      <div class="relative mb-3.5 group">
+        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 group-focus-within:text-brand-green transition-colors pointer-events-none z-10" aria-hidden="true">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
             <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383-4.758 2.855L15 11.114V5.383zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741zM1 11.114l4.758-2.876L1 5.383v5.731z"/>
           </svg>
         </span>
-        <input type="email" id="email" name="email" class="peer w-full bg-white/20 border-[1.5px] border-white/30 rounded-[10px] pt-[22px] pb-[6px] pr-[18px] pl-[44px] font-sans text-[0.95rem] text-white outline-none transition-all focus:bg-white/25 focus:border-white/70 focus:ring-[3px] focus:ring-white/15 placeholder-transparent" placeholder="E-mail" required />
-        <label for="email" class="absolute left-[44px] top-3.5 text-white/75 text-[0.95rem] transition-all peer-focus:-translate-y-2.5 peer-focus:text-[0.7rem] peer-focus:text-white/90 peer-[:not(:placeholder-shown)]:-translate-y-2.5 peer-[:not(:placeholder-shown)]:text-[0.7rem] peer-[:not(:placeholder-shown)]:text-white/90 cursor-text pointer-events-none font-medium">E-mail</label>
+        <input type="email" id="email" name="email" class="peer w-full bg-white border border-stone-200/90 rounded-xl pt-[22px] pb-[7px] pr-4 pl-[44px] font-sans text-sm text-brand-dark outline-none shadow-2xs focus-visible:ring-2 focus-visible:ring-brand-green focus-visible:ring-offset-2 transition-all focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 placeholder-transparent" placeholder="E-mail" required />
+        <label for="email" class="absolute left-[44px] top-3.5 text-stone-500 text-sm transition-all peer-focus:-translate-y-2.5 peer-focus:text-[0.7rem] peer-focus:text-brand-green peer-[:not(:placeholder-shown)]:-translate-y-2.5 peer-[:not(:placeholder-shown)]:text-[0.7rem] peer-[:not(:placeholder-shown)]:text-stone-500 cursor-text pointer-events-none font-medium">E-mail</label>
       </div>
 
-      <!-- Grupo de Input: Senha -->
-      <div class="relative mb-3 group">
-        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/80 pointer-events-none z-10" aria-hidden="true">
+      <!-- Senha (Floating Label) -->
+      <div class="relative mb-5 group">
+        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 group-focus-within:text-brand-green transition-colors pointer-events-none z-10" aria-hidden="true">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M8 1a2 2 0 0 1 2-2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+            <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
           </svg>
         </span>
-        <input type="password" id="senha" name="senha" class="peer w-full bg-white/20 border-[1.5px] border-white/30 rounded-[10px] pt-[22px] pb-[6px] pr-[40px] pl-[44px] font-sans text-[0.95rem] text-white outline-none transition-all focus:bg-white/25 focus:border-white/70 focus:ring-[3px] focus:ring-white/15 placeholder-transparent" placeholder="Senha" required />
-        <label for="senha" class="absolute left-[44px] top-3.5 text-white/75 text-[0.95rem] transition-all peer-focus:-translate-y-2.5 peer-focus:text-[0.7rem] peer-focus:text-white/90 peer-[:not(:placeholder-shown)]:-translate-y-2.5 peer-[:not(:placeholder-shown)]:text-[0.7rem] peer-[:not(:placeholder-shown)]:text-white/90 cursor-text pointer-events-none font-medium">Senha</label>
-        
-        <button type="button" id="btnToggleSenha" class="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors focus:outline-none p-1 rounded-full hover:bg-white/10" aria-label="Mostrar senha">
+        <input type="password" id="senha" name="senha" class="peer w-full bg-white border border-stone-200/90 rounded-xl pt-[22px] pb-[7px] pr-[44px] pl-[44px] font-sans text-sm text-brand-dark outline-none shadow-2xs focus-visible:ring-2 focus-visible:ring-brand-green focus-visible:ring-offset-2 transition-all focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 placeholder-transparent" placeholder="Senha" required />
+        <label for="senha" class="absolute left-[44px] top-3.5 text-stone-500 text-sm transition-all peer-focus:-translate-y-2.5 peer-focus:text-[0.7rem] peer-focus:text-brand-green peer-[:not(:placeholder-shown)]:-translate-y-2.5 peer-[:not(:placeholder-shown)]:text-[0.7rem] peer-[:not(:placeholder-shown)]:text-stone-500 cursor-text pointer-events-none font-medium">Senha</label>
+
+        <button type="button" id="btnToggleSenha" class="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-brand-dark transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-green p-1.5 rounded-lg hover:bg-stone-100 cursor-pointer" aria-label="Mostrar senha">
           <svg id="eye-icon-closed" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="block"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" y1="2" x2="22" y2="22"></line></svg>
           <svg id="eye-icon-open" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
         </button>
       </div>
 
-      <!-- Linha de Botões de Ação -->
-      <div class="grid grid-cols-2 rounded-[10px] overflow-hidden mt-[18px] mb-[18px] shadow-[0_4px_18px_rgba(0,0,0,0.18)]">
-        <button type="submit" class="p-[15px] font-display font-bold text-base cursor-pointer tracking-wide transition-all hover:opacity-90 active:scale-y-[0.96] bg-brand-green text-brand-dark flex items-center justify-center shadow-[inset_0_-3px_0_rgba(0,0,0,0.15)]">Cadastrar</button>
-        <a href="/login" class="p-[15px] font-display font-bold text-base cursor-pointer tracking-wide transition-all hover:opacity-90 active:scale-y-[0.96] bg-brand-dark text-white flex items-center justify-center text-center">Login</a>
-      </div>
+      <!-- Botão Principal -->
+      <button type="submit" class="w-full py-3.5 px-6 rounded-xl bg-brand-green hover:bg-brand-green-light text-white font-display font-bold text-base shadow-[0_4px_14px_rgba(15,83,56,0.2)] transition-all hover:-translate-y-0.5 active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-brand-green focus-visible:ring-offset-2 cursor-pointer mb-5">
+        Criar minha conta
+      </button>
 
       <!-- Parágrafo alternativo -->
-      <p class="text-center text-[0.88rem] text-white/90 mb-5">Já tem uma conta? <a href="/login" class="text-white font-bold underline hover:text-brand-dark transition-colors">Faça o login aqui</a></p>
+      <p class="text-center text-sm text-stone-600 mb-6">
+        Já tem uma conta? <a href="/login" class="text-brand-green font-bold hover:text-brand-green-light underline underline-offset-2 transition-colors">Faça o login aqui</a>
+      </p>
 
       <!-- Divisor Semântico -->
-      <div class="flex items-center gap-2.5 mb-3.5">
-        <hr class="flex-1 border-t border-white/35" />
-        <span class="text-[0.82rem] font-semibold text-white/85 whitespace-nowrap">Ou continue com</span>
-        <hr class="flex-1 border-t border-white/35" />
+      <div class="flex items-center gap-3 mb-4">
+        <hr class="flex-1 border-t border-stone-200" />
+        <span class="text-xs font-semibold text-stone-400 uppercase tracking-wider whitespace-nowrap">Ou continue com</span>
+        <hr class="flex-1 border-t border-stone-200" />
       </div>
 
       <!-- Botões de Login Social -->
-      <div class="grid grid-cols-2 gap-2.5 mb-4">
-        <button type="button" class="flex items-center justify-center gap-2 p-3 bg-brand-dark text-white rounded-[10px] font-sans font-semibold text-[0.88rem] transition-all hover:bg-[#1c2f40] hover:-translate-y-[1px] shadow-[0_3px_12px_rgba(0,0,0,0.2)]">
+      <div class="grid grid-cols-2 gap-3 mb-6">
+        <button type="button" class="flex items-center justify-center gap-2 py-3 px-4 bg-white border border-stone-200 hover:bg-stone-50 text-brand-dark rounded-xl font-sans font-semibold text-sm transition-all shadow-2xs cursor-pointer">
           <svg viewBox="0 0 48 48" class="w-[18px] h-[18px] shrink-0" aria-hidden="true">
             <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
             <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
@@ -130,7 +146,7 @@
           </svg>
           Google
         </button>
-        <button type="button" class="flex items-center justify-center gap-2 p-3 bg-brand-dark text-white rounded-[10px] font-sans font-semibold text-[0.88rem] transition-all hover:bg-[#1c2f40] hover:-translate-y-[1px] shadow-[0_3px_12px_rgba(0,0,0,0.2)]">
+        <button type="button" class="flex items-center justify-center gap-2 py-3 px-4 bg-white border border-stone-200 hover:bg-stone-50 text-brand-dark rounded-xl font-sans font-semibold text-sm transition-all shadow-2xs cursor-pointer">
           <svg viewBox="0 0 24 24" fill="#1877F2" class="w-[18px] h-[18px] shrink-0" aria-hidden="true">
             <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.532-4.697 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.49 0-1.955.93-1.955 1.887v2.26h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
           </svg>
@@ -138,10 +154,13 @@
         </button>
       </div>
 
-      <footer class="text-center text-[0.78rem] text-white/80 leading-relaxed">
+      <footer class="text-center text-xs text-stone-500 leading-relaxed space-y-2">
         <p>
-          Ao se cadastrar, você concorda com nossos<br>
-          <a href="#" class="text-white font-bold underline underline-offset-2 hover:text-brand-dark transition-colors">Termos e Condições</a>
+          Ao se cadastrar, você concorda com nossos
+          <a href="#" class="text-brand-dark font-semibold underline underline-offset-2 hover:text-brand-green transition-colors">Termos e Condições</a>
+        </p>
+        <p>
+          Precisa de ajuda? <a href="/wiki" class="text-brand-green font-semibold underline underline-offset-2 hover:text-brand-green-light transition-colors">Acesse a Wiki do sistema</a>
         </p>
       </footer>
     </form>
@@ -150,13 +169,13 @@
   <script>
     window.addEventListener('DOMContentLoaded', () => {
       document.body.classList.add('loaded');
-      
+
       const btnToggle = document.getElementById('btnToggleSenha');
       const inputSenha = document.getElementById('senha');
       const iconOpen = document.getElementById('eye-icon-open');
       const iconClosed = document.getElementById('eye-icon-closed');
-      
-      if(btnToggle && inputSenha) {
+
+      if (btnToggle && inputSenha) {
         btnToggle.addEventListener('click', () => {
           if (inputSenha.type === 'password') {
             inputSenha.type = 'text';

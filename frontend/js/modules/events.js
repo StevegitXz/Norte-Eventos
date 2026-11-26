@@ -184,67 +184,69 @@ function createEventCardElement(ev, isExploreView) {
     const safeId = Number(ev.id) || 0;
     const safeInscritos = Number(ev.inscritos) || 0;
     const safeCapacidade = Number(ev.capacidade) || 0;
-    
+
+    const backgroundMediaHTML = safeImageUrl
+        ? `<img src="${escapeHTML(safeImageUrl)}" alt="${escapeHTML(ev.nome)}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />`
+        : `<div class="absolute inset-0 w-full h-full ${safeBannerClass} transition-transform duration-700 ease-out group-hover:scale-105">
+             <div class="absolute inset-0 opacity-30" style="background-image: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.45) 0%, transparent 55%);"></div>
+           </div>`;
+
     if (isExploreView) {
-        const bgStyle = safeImageUrl ? `background-image: url('${safeImageUrl}');` : 'background-color: #00a35c;';
-        const bgClass = safeImageUrl ? 'bg-cover bg-center' : '';
-        
-        const heightStyle = state.exploreListView ? 'min-height: 450px;' : 'min-height: 320px;';
-        
-        card.className = `relative rounded-3xl overflow-hidden shadow-md transition-all hover:shadow-xl flex flex-col event-card ${bgClass}`;
-        if (bgStyle) card.setAttribute('style', `${bgStyle} ${heightStyle}`);
-        else card.setAttribute('style', heightStyle);
+        const minHeightClass = state.exploreListView ? 'min-h-[460px]' : 'min-h-[420px]';
+
+        card.className = `relative ${minHeightClass} rounded-[30px] overflow-hidden shadow-[0_16px_38px_rgba(0,0,0,0.10)] hover:shadow-[0_24px_48px_rgba(0,0,0,0.18)] hover:-translate-y-1.5 transition-all duration-500 flex flex-col justify-end group event-card select-none`;
 
         let actionsHTML = '';
         if (ev.inscrito) {
             actionsHTML = `
-            <div class="flex items-center gap-2 mt-3">
-                <button class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-sm font-bold text-white bg-brand-green/90 hover:bg-brand-green backdrop-blur-md btn-details transition-colors shadow-sm" data-id="${safeId}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    Inscrito
+            <div class="flex items-center gap-2.5 w-full">
+                <button type="button" class="flex-1 flex items-center justify-center gap-2 py-3.5 px-5 rounded-full bg-white hover:bg-stone-100 active:scale-[0.99] text-brand-green font-display font-bold text-sm shadow-lg transition-all cursor-pointer btn-details" data-id="${safeId}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Inscrito • Ver detalhes
                 </button>
-                <button class="w-12 h-[38px] flex shrink-0 items-center justify-center rounded-xl bg-red-500/80 hover:bg-red-500 text-white backdrop-blur-md btn-unsubscribe-card transition-colors shadow-sm" data-id="${safeId}" title="Cancelar Inscrição">
+                <button type="button" class="w-12 h-12 flex shrink-0 items-center justify-center rounded-full bg-red-500/85 hover:bg-red-500 text-white backdrop-blur-md border border-white/15 shadow-lg btn-unsubscribe-card transition-all cursor-pointer" data-id="${safeId}" title="Cancelar Inscrição" aria-label="Cancelar Inscrição">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </div>`;
         } else {
-            actionsHTML = `<button class="w-full mt-3 flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-sm font-semibold text-brand-dark bg-white/90 hover:bg-white backdrop-blur-md btn-details transition-colors" data-id="${safeId}">Ver Detalhes</button>`;
+            actionsHTML = `
+            <button type="button" class="w-full py-3.5 px-6 rounded-full bg-white hover:bg-stone-100 active:scale-[0.99] text-brand-dark font-display font-bold text-sm shadow-lg transition-all cursor-pointer btn-details" data-id="${safeId}">
+                Ver detalhes
+            </button>`;
         }
 
         card.innerHTML = `
-          <!-- Overlay degrade para garantir leitura do glass no fundo -->
-          <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);"></div>
-          
-          <div class="relative z-10 flex flex-col h-full justify-end p-4">
-              <!-- Tag Categoria -->
-              <div class="absolute top-4 right-4">
-                  <span class="inline-block px-3 py-1 bg-black/40 backdrop-blur-md rounded-full text-xs font-bold text-white shadow-sm">${escapeHTML(ev.categoria || 'Geral')}</span>
+          ${backgroundMediaHTML}
+          <div class="absolute inset-x-0 bottom-0 h-[68%] card-progressive-blur pointer-events-none"></div>
+          <div class="absolute inset-0 card-scrim-gradient pointer-events-none"></div>
+
+          <div class="relative z-10 p-6 sm:p-7 flex flex-col">
+              <h4 class="font-display font-bold text-2xl text-white tracking-tight mb-2 line-clamp-1">${escapeHTML(ev.nome)}</h4>
+              <p class="text-sm text-white/80 leading-relaxed mb-4 ${state.exploreListView ? 'line-clamp-3' : 'line-clamp-2'}">${escapeHTML(ev.descricao || 'Experiência exclusiva na Região Norte.')}</p>
+
+              <!-- Pílulas Frosted Glass -->
+              <div class="flex flex-wrap items-center gap-2 mb-5">
+                  <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/10 text-xs font-medium text-white/95">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" class="text-amber-300 shrink-0"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                      ${escapeHTML(ev.categoria || 'Geral')}
+                  </span>
+                  <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/10 text-xs font-medium text-white/95">
+                      ${escapeHTML(formatDateString(ev.data))} • ${escapeHTML(ev.hora || '00:00')}
+                  </span>
+                  <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/10 text-xs font-medium text-white/95 max-w-full">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="text-brand-emerald shrink-0"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                      <span class="truncate max-w-[140px]">${escapeHTML(ev.local)}</span>
+                      <span class="text-white/60">•</span>
+                      <span>${safeInscritos}/${safeCapacidade}</span>
+                  </span>
               </div>
 
-              <!-- Glass Morphism Card Info -->
-              <div class="rounded-2xl p-5 w-full text-white shadow-xl" style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);">
-                  <div class="flex items-center gap-2 text-xs font-semibold text-white/90 mb-1">
-                      <span>${escapeHTML(formatDateString(ev.data))} às ${escapeHTML(ev.hora || '00:00')}</span>
-                  </div>
-                  <h4 class="text-xl md:text-2xl font-bold mb-1 line-clamp-1 drop-shadow-md">${escapeHTML(ev.nome)}</h4>
-                  <p class="text-sm text-white/80 mb-3 ${state.exploreListView ? 'line-clamp-4 text-base' : 'line-clamp-2'}">${escapeHTML(ev.descricao || 'Sem descrição')}</p>
-                  
-                  <div class="flex items-center gap-2 text-xs text-white/90 mb-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                      <span>${escapeHTML(ev.local)}</span>
-                  </div>
-                  <div class="flex items-center gap-2 text-xs text-white/90">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                      <span>${safeInscritos} / ${safeCapacidade} Inscritos</span>
-                  </div>
-
-                  ${actionsHTML}
-              </div>
+              ${actionsHTML}
           </div>
         `;
 
         card.querySelector('.btn-details').addEventListener('click', () => openEventProductModal(ev));
-        
+
         if (ev.inscrito) {
             card.querySelector('.btn-unsubscribe-card').addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -254,42 +256,48 @@ function createEventCardElement(ev, isExploreView) {
         }
 
     } else {
-        card.className = 'bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm border border-gray-100 dark:border-slate-800 transition-all hover:shadow-md flex flex-col event-card';
+        card.className = 'relative min-h-[410px] rounded-[30px] overflow-hidden shadow-[0_16px_38px_rgba(0,0,0,0.10)] hover:shadow-[0_24px_48px_rgba(0,0,0,0.18)] hover:-translate-y-1.5 transition-all duration-500 flex flex-col justify-end group event-card select-none';
         card.dataset.id = safeId;
 
-        const bannerHTML = safeImageUrl 
-          ? `<div class="h-32 bg-cover bg-center flex items-start justify-end p-4" style="background-image: url('${safeImageUrl}');">
-               <span class="inline-block px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full text-xs font-bold text-white shadow-sm">${escapeHTML(ev.categoria || 'Geral')}</span>
-             </div>`
-          : `<div class="h-24 p-4 flex items-start justify-end ${safeBannerClass}">
-               <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-bold text-white shadow-sm">${escapeHTML(ev.categoria || 'Geral')}</span>
-             </div>`;
-
-        let actionsHTML = `
-            <div class="flex flex-col w-full gap-2">
-              <button class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium text-blue-600 bg-blue-50 btn-manage" data-id="${safeId}">Gerenciar Inscrições</button>
+        const actionsHTML = `
+            <div class="flex flex-col w-full gap-2.5">
+              <button type="button" class="w-full py-3.5 px-6 rounded-full bg-white hover:bg-stone-100 active:scale-[0.99] text-brand-dark font-display font-bold text-sm shadow-lg transition-all cursor-pointer btn-manage" data-id="${safeId}">
+                  Gerenciar Inscrições
+              </button>
               <div class="flex items-center gap-2 w-full">
-                <button class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium text-brand-dark bg-gray-100 btn-edit" data-id="${safeId}">Editar</button>
-                <button class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium text-red-600 bg-red-50 btn-delete" data-id="${safeId}">Excluir</button>
+                <button type="button" class="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-full text-xs font-semibold text-white bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/15 btn-edit transition-all cursor-pointer" data-id="${safeId}">
+                    Editar
+                </button>
+                <button type="button" class="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-full text-xs font-semibold text-red-100 hover:text-white bg-red-500/25 hover:bg-red-500 backdrop-blur-md border border-red-400/25 btn-delete transition-all cursor-pointer" data-id="${safeId}">
+                    Excluir
+                </button>
               </div>
             </div>
           `;
 
         card.innerHTML = `
-          ${bannerHTML}
-          <div class="p-5 flex-1 flex flex-col">
-            <div class="flex items-center gap-2 text-sm font-semibold text-brand-green mb-2">
-              <span>${escapeHTML(formatDateString(ev.data))} às ${escapeHTML(ev.hora || '00:00')}</span>
+          ${backgroundMediaHTML}
+          <div class="absolute inset-x-0 bottom-0 h-[70%] card-progressive-blur pointer-events-none"></div>
+          <div class="absolute inset-0 card-scrim-gradient pointer-events-none"></div>
+
+          <div class="relative z-10 p-6 sm:p-7 flex flex-col">
+            <h4 class="font-display font-bold text-2xl text-white tracking-tight mb-2 line-clamp-1">${escapeHTML(ev.nome)}</h4>
+            <p class="text-sm text-white/80 leading-relaxed mb-4 line-clamp-2">${escapeHTML(ev.descricao || 'Sem descrição')}</p>
+
+            <div class="flex flex-wrap items-center gap-2 mb-5">
+              <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/10 text-xs font-medium text-white/95">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" class="text-amber-300 shrink-0"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                ${escapeHTML(ev.categoria || 'Geral')}
+              </span>
+              <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/10 text-xs font-medium text-white/95">
+                ${escapeHTML(formatDateString(ev.data))} • ${escapeHTML(ev.hora || '00:00')}
+              </span>
+              <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/10 text-xs font-medium text-white/95">
+                ${safeInscritos}/${safeCapacidade} inscritos
+              </span>
             </div>
-            <h4 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-2">${escapeHTML(ev.nome)}</h4>
-            <p class="text-sm text-gray-500 mb-4 line-clamp-2">${escapeHTML(ev.descricao || 'Sem descrição')}</p>
-            <div class="space-y-2 mb-5">
-              <div class="flex items-center gap-2 text-sm text-gray-600"><span>${escapeHTML(ev.local)}</span></div>
-              <div class="flex items-center gap-2 text-sm text-gray-600"><span>${safeInscritos} / ${safeCapacidade} Inscritos</span></div>
-            </div>
-            <div class="flex flex-col gap-3 pt-4 border-t border-gray-100">
-              ${actionsHTML}
-            </div>
+
+            ${actionsHTML}
           </div>
         `;
 
@@ -297,7 +305,7 @@ function createEventCardElement(ev, isExploreView) {
         card.querySelector('.btn-delete').addEventListener('click', () => openDeleteConfirmModal(safeId));
         card.querySelector('.btn-manage').addEventListener('click', () => openEventDetails(safeId));
     }
-    
+
     return card;
 }
 
@@ -312,8 +320,13 @@ export function enableEditMode(id) {
     document.getElementById('event-local').value = ev.local;
     document.getElementById('event-desc').value = ev.descricao || '';
     document.getElementById('event-capacidade').value = ev.capacidade || 100;
-    
+
     state.selectedBannerClass = getSafeBannerClass(ev.bannerClass);
+    document.querySelectorAll('.banner-option').forEach(opt => {
+        const isMatch = opt.dataset.gradient === state.selectedBannerClass;
+        opt.classList.toggle('selected', isMatch);
+        opt.setAttribute('aria-checked', String(isMatch));
+    });
     document.getElementById('form-view-title').textContent = 'Editar Detalhes do Evento';
     document.getElementById('btn-submit-text').textContent = 'Salvar Alterações';
     switchTab('create-event');
@@ -340,6 +353,7 @@ export function openEventProductModal(ev) {
     const imgPreview = document.getElementById('details-image');
     const imgPlaceholder = document.getElementById('details-image-placeholder');
     const safeImageUrl = getSafeImageUrl(ev.imagem_url);
+    const safeBannerClass = getSafeBannerClass(ev.bannerClass);
     if (safeImageUrl) {
         imgPreview.src = safeImageUrl;
         imgPreview.classList.remove('hidden');
@@ -347,6 +361,7 @@ export function openEventProductModal(ev) {
     } else {
         imgPreview.src = '';
         imgPreview.classList.add('hidden');
+        imgPlaceholder.className = `w-full h-full flex items-center justify-center text-white/80 ${safeBannerClass}`;
         imgPlaceholder.classList.remove('hidden');
     }
 
@@ -356,7 +371,7 @@ export function openEventProductModal(ev) {
     document.getElementById('details-local').textContent = ev.local;
     document.getElementById('details-capacity').textContent = `${ev.inscritos || 0} / ${ev.capacidade || 0} vagas ocupadas`;
     document.getElementById('details-description').textContent = ev.descricao || 'Nenhuma descrição fornecida para este evento.';
-    
+
     const creatorElem = document.getElementById('details-creator');
     if (creatorElem) {
         creatorElem.textContent = ev.criador_nome || 'Usuário Norte Eventos';
@@ -364,20 +379,20 @@ export function openEventProductModal(ev) {
 
     const btnSub = document.getElementById('btn-details-subscribe');
     btnSub.dataset.id = ev.id;
-    
+
     const newBtnSub = btnSub.cloneNode(true);
     btnSub.parentNode.replaceChild(newBtnSub, btnSub);
 
     if (ev.inscrito) {
         newBtnSub.textContent = 'Cancelar Inscrição';
-        newBtnSub.className = 'w-full flex items-center justify-center gap-3 py-4 px-6 rounded-2xl text-lg font-bold text-white bg-red-500 hover:bg-red-600 transition-colors shadow-lg shadow-red-500/30';
+        newBtnSub.className = 'w-full flex items-center justify-center gap-2.5 py-3.5 px-6 rounded-2xl text-base font-display font-bold text-white bg-red-600 hover:bg-red-700 transition-colors shadow-md shadow-red-600/20 cursor-pointer';
         newBtnSub.addEventListener('click', () => {
             newBtnSub.innerHTML = '<svg class="animate-spin h-5 w-5 mx-auto text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
             callSubscription(ev.id, 'DELETE');
         });
     } else {
         newBtnSub.textContent = 'Inscrever-se no Evento';
-        newBtnSub.className = 'w-full flex items-center justify-center gap-3 py-4 px-6 rounded-2xl text-lg font-bold text-white bg-brand-green hover:bg-[#008a4e] transition-colors shadow-lg shadow-brand-green/30';
+        newBtnSub.className = 'w-full flex items-center justify-center gap-2.5 py-3.5 px-6 rounded-2xl text-base font-display font-bold text-white bg-brand-green hover:bg-brand-green-light transition-colors shadow-[0_4px_14px_rgba(15,83,56,0.22)] cursor-pointer';
         newBtnSub.addEventListener('click', () => {
             newBtnSub.innerHTML = '<svg class="animate-spin h-5 w-5 mx-auto text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
             callSubscription(ev.id, 'POST');
@@ -396,8 +411,30 @@ async function openEventDetails(eventoId) {
     const ev = state.events.find(e => e.id == eventoId);
     if (!ev) return;
     state.eventManageId = eventoId;
+
+    const bannerEl = document.getElementById('manage-event-banner');
+    const safeImageUrl = getSafeImageUrl(ev.imagem_url);
+    const safeBannerClass = getSafeBannerClass(ev.bannerClass);
+    if (bannerEl) {
+        bannerEl.className = `h-52 sm:h-64 w-full bg-cover bg-center relative ${safeImageUrl ? '' : safeBannerClass}`;
+        bannerEl.style.backgroundImage = safeImageUrl ? `url('${safeImageUrl}')` : '';
+    }
+
+    const catEl = document.getElementById('manage-event-category');
+    if (catEl) catEl.textContent = ev.categoria || 'Geral';
+
     document.getElementById('manage-event-title').textContent = ev.nome;
     document.getElementById('manage-event-desc').textContent = ev.descricao || 'Sem descrição cadastrada.';
+
+    const dtEl = document.getElementById('manage-event-datetime');
+    if (dtEl) dtEl.textContent = `${formatDateString(ev.data)} às ${ev.hora || '00:00'}`;
+
+    const locEl = document.getElementById('manage-event-location');
+    if (locEl) locEl.textContent = ev.local || 'Local não informado';
+
+    const statsEl = document.getElementById('manage-event-stats');
+    if (statsEl) statsEl.textContent = `${Number(ev.inscritos) || 0} de ${Number(ev.capacidade) || 0} inscritos`;
+
     switchTab('manage-event');
     await fetchAndRenderParticipants();
 }
@@ -409,15 +446,29 @@ export async function fetchAndRenderParticipants() {
         const participantes = await fetchParticipants(state.eventManageId);
         container.innerHTML = '';
         if (participantes.length === 0) {
-            container.innerHTML = '<div class="text-center py-4">Nenhum participante.</div>';
+            container.innerHTML = '<div class="text-center text-sm text-stone-500 dark:text-gray-400 py-8 border border-dashed border-stone-200 dark:border-white/10 rounded-2xl">Nenhum participante inscrito ainda.</div>';
             return;
         }
         participantes.forEach(p => {
+            const initials = (p.nome || 'U').trim().substring(0, 2).toUpperCase();
             const item = document.createElement('div');
-            item.className = 'flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border mb-2';
-            item.innerHTML = `<p class="font-bold">${escapeHTML(p.nome)}</p><button class="text-red-500 btn-remove-participant" data-id="${Number(p.id) || 0}">X</button>`;
+            item.className = 'flex items-center justify-between gap-3 p-3.5 bg-white dark:bg-[#121A16] rounded-2xl border border-stone-200/80 dark:border-white/10 shadow-2xs';
+            item.innerHTML = `
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-9 h-9 rounded-full bg-brand-green/10 dark:bg-brand-emerald/15 text-brand-green dark:text-brand-emerald font-display font-bold text-xs flex items-center justify-center shrink-0">
+                        ${escapeHTML(initials)}
+                    </div>
+                    <div class="min-w-0">
+                        <p class="font-semibold text-sm text-brand-dark dark:text-white truncate">${escapeHTML(p.nome)}</p>
+                        ${p.email ? `<p class="text-xs text-stone-500 dark:text-gray-400 truncate">${escapeHTML(p.email)}</p>` : ''}
+                    </div>
+                </div>
+                <button type="button" class="p-2 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-500/15 transition-colors btn-remove-participant cursor-pointer shrink-0" data-id="${Number(p.id) || 0}" aria-label="Remover participante" title="Remover participante">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            `;
             item.querySelector('.btn-remove-participant').addEventListener('click', async () => {
-                if(confirm('Remover participante?')) {
+                if (confirm('Remover participante?')) {
                     await removeParticipant(state.eventManageId, p.id);
                     fetchAndRenderParticipants();
                     loadEventsFromServer();
@@ -426,7 +477,7 @@ export async function fetchAndRenderParticipants() {
             container.appendChild(item);
         });
     } catch (e) {
-        container.innerHTML = '<div class="text-red-500 py-4">Erro ao carregar participantes</div>';
+        container.innerHTML = '<div class="text-red-500 text-sm text-center py-6">Erro ao carregar participantes</div>';
     }
 }
 
